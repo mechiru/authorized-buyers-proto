@@ -1,0 +1,20 @@
+name: nightly
+
+on:
+  schedule:
+    - cron: '* 3 * * *'
+
+jobs:
+  check-for-updates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - run: make init
+      - run: make install-gentool
+      - run: make fetch
+      - run: make gencode
+      - uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
