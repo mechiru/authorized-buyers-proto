@@ -1,7 +1,7 @@
-# google-authorized-buyers-proto
+# authorized-buyers-proto
 
-[![ci](https://github.com/mechiru/google-authorized-buyers-proto/workflows/ci/badge.svg)](https://github.com/mechiru/google-authorized-buyers-proto/actions?query=workflow:ci)
-[![nightly](https://github.com/mechiru/google-authorized-buyers-proto/workflows/nightly/badge.svg)](https://github.com/mechiru/google-authorized-buyers-proto/actions?query=workflow:nightly)
+[![ci](https://github.com/mechiru/authorized-buyers-proto/workflows/ci/badge.svg)](https://github.com/mechiru/authorized-buyers-proto/actions?query=workflow:ci)
+[![nightly](https://github.com/mechiru/authorized-buyers-proto/workflows/nightly/badge.svg)](https://github.com/mechiru/authorized-buyers-proto/actions?query=workflow:nightly)
 
 Detects updates to the following files and generates the go code:
 - [OpenRTB](https://developers.google.com/authorized-buyers/rtb/openrtb-guide)

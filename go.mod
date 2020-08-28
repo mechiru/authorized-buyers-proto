@@ -1,3 +1,3 @@
-module github.com/mechiru/google-authorized-buyers-proto
+module github.com/mechiru/authorized-buyers-proto
 
 go 1.14

@@ -1,4 +1,4 @@
-module github.com/mechiru/google-authorized-buyers-proto/networkbid
+module github.com/mechiru/authorized-buyers-proto/networkbid
 
 go 1.14
 

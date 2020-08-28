@@ -24,7 +24,7 @@ init:
 	mkdir -p {openrtbadx,networkbid}
 	for dir in "openrtbadx" "networkbid"; do \
 		cd $(CURRENT_DIR)/$$dir; \
-		go mod init github.com/mechiru/google-authorized-buyers-proto/$$dir; \
+		go mod init github.com/mechiru/authorized-buyers-proto/$$dir; \
 	done
 
 fetch:

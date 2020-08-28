@@ -1,4 +1,4 @@
-module github.com/mechiru/google-authorized-buyers-proto/openrtbadx
+module github.com/mechiru/authorized-buyers-proto/openrtbadx
 
 go 1.14
 
