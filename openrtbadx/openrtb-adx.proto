@@ -1,7 +1,7 @@
-// Protocol version: v.52
 syntax = "proto2";
-import "openrtb.proto";
 option go_package = ".;openrtbadx";
+// Protocol version: v.53
+import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
 
@@ -590,6 +590,26 @@ message DealExt {
   // https://support.google.com/authorizedbuyers/answer/6114194 for more
   // information.
   optional bool publisher_blocks_overridden = 3;
+
+  // Experimental field; subject to change.
+  // An enum declaring the host of the creative, which will only be
+  // populated for Programmatic Guaranteed deals.
+  // Currently, this field should only ever be set to
+  // CREATIVE_SOURCE_ADVERTISER.
+  enum CreativeSourceType {
+    CREATIVE_SOURCE_UNKNOWN = 0;
+    // The creative is hosted by the advertiser, which means the bidder is
+    // required to provide a creative in the bid response.
+    CREATIVE_SOURCE_ADVERTISER = 1;
+    // The creative is hosted by the publisher, which means the bidder
+    // does not need to include a creative in the bid response.
+    // For more information on publisher-hosted creatives, see
+    // https://support.google.com/admanager/answer/9243220.
+    // This feature isn't currently supported for RTB bidders.
+    CREATIVE_SOURCE_PUBLISHER = 2;
+  }
+  optional CreativeSourceType creative_source = 4
+      [default = CREATIVE_SOURCE_ADVERTISER];
 }
 
 extend com.google.openrtb.BidRequest.Imp.Pmp.Deal {
