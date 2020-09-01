@@ -1,8 +1,8 @@
-// Protocol version: v.181
-// Copyright 2020 Google Inc. All Rights Reserved.
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
+// Protocol version: v.182
+// Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
 // includes the ad slot from a single impression.
@@ -939,6 +939,26 @@ message BidRequest {
         // This setting does not override AdX policies or Ad Review Center
         // decisions.
         optional bool publisher_blocks_overridden = 4 [default = false];
+
+        // Experimental field; subject to change.
+        // An enum declaring the host of the creative, which will only be
+        // populated for Programmatic Guaranteed deals.
+        // Currently, this field should only ever be set to
+        // CREATIVE_SOURCE_ADVERTISER.
+        enum CreativeSourceType {
+          CREATIVE_SOURCE_UNKNOWN = 0;
+          // The creative is hosted by the advertiser, which means the bidder
+          // is required to provide a creative in the bid response.
+          CREATIVE_SOURCE_ADVERTISER = 1;
+          // The creative is hosted by the publisher, which means the bidder
+          // does not need to include a creative in the bid response.
+          // For more information on publisher-hosted creatives, see
+          // https://support.google.com/admanager/answer/9243220.
+          // This feature isn't currently supported for RTB bidders.
+          CREATIVE_SOURCE_PUBLISHER = 2;
+        }
+        optional CreativeSourceType creative_source = 16
+            [default = CREATIVE_SOURCE_ADVERTISER];
 
         // This field is deprecated in favor of the boolean must_bid field
         // below as of December 2019. It will be removed from the protocol in
