@@ -5,18 +5,17 @@ on:
     branches:
       - master
 
+env:
+  GO111MODULE: on
+
 jobs:
   check-for-updates:
-    if: startsWith(github.ref, 'refs/heads/') && contains(github.event.head_commit.message, '[run]')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
-      - run: make init
-      - run: make install-gentool
-      - run: make fetch
-      - run: make gencode
-      - uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: go build -modfile=go.local.mod
+        working-directory: example
+      - run: go build
+        working-directory: example
