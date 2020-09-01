@@ -49,7 +49,8 @@ install-gentool:
 	sudo chmod +x /usr/local/bin/protoc
 
 gencode:
-	git apply add-syntax-and-go_package.patch
+	cd ./openrtbadx && sed -i "1s!^!syntax = \"proto2\";\noption go_package = \".;openrtbadx\";\n!" $(OPENRTB_ADX_FILES)
+	cd ./networkbid && sed -i "1s!^!syntax = \"proto2\";\noption go_package = \".;networkbid\";\npackage com.google.protos.adx;\n!" $(NETWORK_BID_FILES)
 	protoc -I ./openrtbadx --go_out=./openrtbadx --go-grpc_out=./openrtbadx $(OPENRTB_ADX_FILES)
 	protoc -I ./networkbid --go_out=./networkbid --go-grpc_out=./networkbid $(NETWORK_BID_FILES)
 	for dir in "openrtbadx" "networkbid"; do \
