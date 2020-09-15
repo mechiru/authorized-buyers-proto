@@ -366,7 +366,7 @@ const (
 	// items, etc, as the user is scrolling. It renders centered and not to
 	// the side.
 	BidRequest_Video_IN_FEED BidRequest_Video_Placement = 3
-	// Audio is a request for an ad that is an audio stream.  It is distinct
+	// Audio is a request for an ad that is an audio stream. It is distinct
 	// from INSTREAM above as that is exclusive to video requests.
 	BidRequest_Video_AUDIO BidRequest_Video_Placement = 4
 	// The in-article video format is a video creative that loads and plays
@@ -435,11 +435,11 @@ func (BidRequest_Video_Placement) EnumDescriptor() ([]byte, []int) {
 // determined to be auto-play, click-to-play or mouse-over based on the best
 // measurement available. This includes things like how recently the user
 // interacted with a web page. For auto-play, ads can start playing with the
-// sound on or off. Some ads (e.g. in-feed ads) are muted until the user
+// sound on or off. Some ads (e.g., in-feed ads) are muted until the user
 // interacts with the ad. Alternatively, if an ad would normally play with
 // the sound on but the device is muted then the value will be set to sound
 // off. For devices where it is not possible to determine if the device is
-// muted (e.g. desktop), we assume that sound is on.
+// muted (e.g., desktop), we assume that sound is on.
 type BidRequest_Video_VideoPlaybackMethod int32
 
 const (
@@ -2106,7 +2106,7 @@ func (BidRequest_AdSlot_StickySettings_Stickiness) EnumDescriptor() ([]byte, []i
 	return file_realtime_bidding_proto_rawDescGZIP(), []int{0, 8, 8, 0}
 }
 
-// When exchange_deal_id is set, the type of deal.  This is reported to
+// When exchange_deal_id is set, the type of deal. This is reported to
 // publishers and affects how the deal is treated in the auction.
 type BidResponse_Ad_AdSlot_ExchangeDealType int32
 
@@ -2282,15 +2282,15 @@ type BidRequest struct {
 	// The billing address country of the publisher. This may be different from
 	// the detected country of the user in geo_criteria_id or the hosting country
 	// of the website. For a complete list of country codes, please refer to
-	// https://developers.google.com/adwords/api/docs/appendix/codes-formats#country-codes
+	// https://developers.google.com/google-ads/api/reference/data/codes-formats#country_codes
 	PublisherCountry *string `protobuf:"bytes,55,opt,name=publisher_country,json=publisherCountry" json:"publisher_country,omitempty"`
-	// Location of the end user. Uses a subset of the codes used in the AdWords
-	// API. See the geo-table.csv table in the technical documentation for a list
-	// of ids. The geo_criteria_id field replaces the deprecated country, region,
-	// city, and metro fields.
+	// Location of the end user. Uses a subset of the codes used in the Google
+	// Ads API. See the geo-table.csv table in the technical documentation for a
+	// list of IDs. The geo_criteria_id field replaces the deprecated country,
+	// region, city, and metro fields.
 	GeoCriteriaId *int32 `protobuf:"varint,39,opt,name=geo_criteria_id,json=geoCriteriaId" json:"geo_criteria_id,omitempty"`
 	// Detected postal code of the appropriate type for the country of the end
-	// user (e.g. zip code if the country is "US"). The postal_code_prefix field
+	// user (e.g., zip code if the country is "US"). The postal_code_prefix field
 	// is set when accuracy is too low to imply a full code, otherwise the
 	// postal_code field is set.
 	PostalCode       *string `protobuf:"bytes,33,opt,name=postal_code,json=postalCode" json:"postal_code,omitempty"`
@@ -2334,7 +2334,7 @@ type BidRequest struct {
 	// Detected user languages, based on the language of the web page, the browser
 	// settings, and other signals. The order is arbitrary. The codes are 2 or 5
 	// characters and are documented at
-	// https://developers.google.com/adwords/api/docs/appendix/languagecodes
+	// https://developers.google.com/google-ads/api/reference/data/codes-formats#languages
 	DetectedLanguage []string `protobuf:"bytes,12,rep,name=detected_language,json=detectedLanguage" json:"detected_language,omitempty"`
 	// Unordered list of detected content verticals. See the
 	// publisher-verticals.txt file in the technical documentation for a list of
@@ -2343,7 +2343,7 @@ type BidRequest struct {
 	// List of detected content labels. See content-labels.txt file in the
 	// technical documentation for a list of ids.
 	DetectedContentLabel []int32 `protobuf:"varint,26,rep,packed,name=detected_content_label,json=detectedContentLabel" json:"detected_content_label,omitempty"`
-	// This represents a unique ID for the overall query.  In the event
+	// This represents a unique ID for the overall query. In the event
 	// that there are multiple callouts for a query, all callout requests for that
 	// query will contain the same google_query_id.
 	GoogleQueryId *string                 `protobuf:"bytes,59,opt,name=google_query_id,json=googleQueryId" json:"google_query_id,omitempty"`
@@ -3020,11 +3020,11 @@ type BidRequest_Device struct {
 	DeviceType *BidRequest_Device_DeviceType `protobuf:"varint,1,opt,name=device_type,json=deviceType,enum=com.google.protos.adx.BidRequest_Device_DeviceType,def=0" json:"device_type,omitempty"`
 	// The platform of the device. Examples: android, iphone, palm
 	Platform *string `protobuf:"bytes,2,opt,name=platform,def=" json:"platform,omitempty"`
-	// The brand of the device, e.g. Nokia, Samsung.
+	// The brand of the device, e.g., Nokia, Samsung.
 	Brand *string `protobuf:"bytes,3,opt,name=brand,def=" json:"brand,omitempty"`
-	// The model of the device, e.g. N70, Galaxy.
+	// The model of the device, e.g., N70, Galaxy.
 	Model *string `protobuf:"bytes,4,opt,name=model,def=" json:"model,omitempty"`
-	// The OS version; e.g. 2 for Android 2.1, or 3.3 for iOS 3.3.1.
+	// The OS version; e.g., 2 for Android 2.1, or 3.3 for iOS 3.3.1.
 	OsVersion *BidRequest_Device_OsVersion `protobuf:"bytes,5,opt,name=os_version,json=osVersion" json:"os_version,omitempty"`
 	// Unique identifier for the mobile carrier if the device is connected to
 	// the internet via a carrier (as opposed to via WiFi). To look up carrier
@@ -3035,11 +3035,11 @@ type BidRequest_Device struct {
 	ScreenWidth *int32 `protobuf:"varint,7,opt,name=screen_width,json=screenWidth,def=0" json:"screen_width,omitempty"`
 	// The height of the device screen in pixels.
 	ScreenHeight *int32 `protobuf:"varint,8,opt,name=screen_height,json=screenHeight,def=0" json:"screen_height,omitempty"`
-	// Used for high-density devices (e.g. iOS retina displays). A non-default
+	// Used for high-density devices (e.g., iOS retina displays). A non-default
 	// value indicates that the nominal screen size (with pixels as the unit)
 	// does not describe the actual number of pixels in the screen. For example,
 	// nominal width and height may be 320x640 for a screen that actually has
-	// 640x1080 pixels, in which case screen_width=320, screen_height=640, and
+	// 640x1280 pixels, in which case screen_width=320, screen_height=640, and
 	// screen_pixel_ratio_millis=2000, since each axis has twice as many pixels
 	// as its dimensions would indicate.
 	ScreenPixelRatioMillis *int32 `protobuf:"varint,9,opt,name=screen_pixel_ratio_millis,json=screenPixelRatioMillis,def=0" json:"screen_pixel_ratio_millis,omitempty"`
@@ -3259,7 +3259,7 @@ type BidRequest_Mobile struct {
 	// mobile apps and categories is defined by the Google Play Store for
 	// Android apps, or the Apple iTunes Store for iOS apps. To look up category
 	// name from category ID, please refer to
-	// https://developers.google.com/adwords/api/docs/appendix/mobileappcategories
+	// https://developers.google.com/google-ads/api/reference/data/codes-formats#mobile_app_categories
 	AppCategoryIds []int32 `protobuf:"varint,11,rep,name=app_category_ids,json=appCategoryIds" json:"app_category_ids,omitempty"`
 	// For a mobile web request, this field indicates whether the page is
 	// optimized for mobile browsers on high-end mobile phones.
@@ -3761,7 +3761,7 @@ type BidRequest_AdSlot struct {
 	AllowedRestrictedCategoryForDeals []int32 `protobuf:"varint,22,rep,packed,name=allowed_restricted_category_for_deals,json=allowedRestrictedCategoryForDeals" json:"allowed_restricted_category_for_deals,omitempty"`
 	// List of creative languages allowed by the publisher. The order is
 	// arbitrary. The codes are 2 or 5 characters and are documented at
-	// https://developers.google.com/adwords/api/docs/appendix/languagecodes.
+	// https://developers.google.com/google-ads/api/reference/data/codes-formats#languages.
 	// When not set, all languages are allowed.
 	AllowedLanguages []string `protobuf:"bytes,27,rep,name=allowed_languages,json=allowedLanguages" json:"allowed_languages,omitempty"`
 	// The disallowed ad product categories. See the ad-product-categories.txt
@@ -3800,13 +3800,13 @@ type BidRequest_AdSlot struct {
 	// Historical click-through rate for ads served in the ad slot. This is
 	// expressed as a fraction in the range [0.0, 1.0]. The default value of
 	// -1.0 indicates that historical click-through rate data is not available.
-	// This figure does not include data aggregated from AdWords.
+	// This figure does not include data aggregated from Google Ads.
 	ClickThroughRate *float32 `protobuf:"fixed32,25,opt,name=click_through_rate,json=clickThroughRate,def=-1" json:"click_through_rate,omitempty"`
 	// Historical completion rate for video ads served in the ad slot. This is
 	// expressed as a fraction in the range [0.0, 1.0]. The default value of
 	// -1.0 indicates that historical completion rate data is not available.
 	// This field is only applicable to video inventory, and does not include
-	// data aggregated from AdWords.
+	// data aggregated from Google Ads.
 	VideoCompletionRate *float32                               `protobuf:"fixed32,30,opt,name=video_completion_rate,json=videoCompletionRate,def=-1" json:"video_completion_rate,omitempty"`
 	IframingState       *BidRequest_AdSlot_IFramingState       `protobuf:"varint,19,opt,name=iframing_state,json=iframingState,enum=com.google.protos.adx.BidRequest_AdSlot_IFramingState,def=0" json:"iframing_state,omitempty"`
 	IframingDepth       *BidRequest_AdSlot_IFramingDepth       `protobuf:"varint,20,opt,name=iframing_depth,json=iframingDepth,enum=com.google.protos.adx.BidRequest_AdSlot_IFramingDepth,def=0" json:"iframing_depth,omitempty"`
@@ -3831,7 +3831,7 @@ type BidRequest_AdSlot struct {
 	AllowedAdTypes []BidRequest_AdSlot_AllowedAdType `protobuf:"varint,36,rep,packed,name=allowed_ad_types,json=allowedAdTypes,enum=com.google.protos.adx.BidRequest_AdSlot_AllowedAdType" json:"allowed_ad_types,omitempty"`
 	// Total number of impressions served to this user (within this specific
 	// site or app) in this browsing session, plus 1. A session ends after 30
-	// minutes inactivity.  The default value of -1 indicates that the session
+	// minutes inactivity. The default value of -1 indicates that the session
 	// depth cannot be estimated.
 	SessionDepth              *int32                                         `protobuf:"varint,40,opt,name=session_depth,json=sessionDepth,def=-1" json:"session_depth,omitempty"`
 	BuyerGeneratedRequestData []*BidRequest_AdSlot_BuyerGeneratedRequestData `protobuf:"bytes,41,rep,name=buyer_generated_request_data,json=buyerGeneratedRequestData" json:"buyer_generated_request_data,omitempty"`
@@ -4205,8 +4205,8 @@ type BidRequest_BidResponseFeedback struct {
 	// technical documentation for a list of ids.
 	CreativeStatusCode *int32 `protobuf:"varint,3,opt,name=creative_status_code,json=creativeStatusCode" json:"creative_status_code,omitempty"`
 	// If the bid won the auction, this is the price paid in your account
-	// currency.  If the bid participated in the auction but was out-bid, this
-	// is the CPM that should have been exceeded in order to win.  This is not
+	// currency. If the bid participated in the auction but was out-bid, this
+	// is the CPM that should have been exceeded in order to win. This is not
 	// set if the bid was filtered prior to the auction, if the publisher or
 	// winning bidder has opted out of price feedback or if your account has
 	// opted out of sharing winning prices with other bidders. For first-price
@@ -4227,7 +4227,7 @@ type BidRequest_BidResponseFeedback struct {
 	// value of this field is 0. If the bid participated in the auction and
 	// there was a waterfall, the value of this field is a price representing a
 	// sample bid from the eligible mediation networks that were higher than the
-	// auction winner, weighted by expected fill rate.  This field can be used
+	// auction winner, weighted by expected fill rate. This field can be used
 	// in conjunction with minimum_bid_to_win to train bidding models. The CPM
 	// is in micros of your account currency.
 	SampledMediationCpmAheadOfAuctionWinner *int64 `protobuf:"varint,10,opt,name=sampled_mediation_cpm_ahead_of_auction_winner,json=sampledMediationCpmAheadOfAuctionWinner" json:"sampled_mediation_cpm_ahead_of_auction_winner,omitempty"`
@@ -6421,7 +6421,7 @@ type BidResponse_Ad_AdSlot struct {
 	DealId *int64 `protobuf:"varint,5,opt,name=deal_id,json=dealId,def=0" json:"deal_id,omitempty"`
 	// For exchange bidders (third party exchanges doing real-time bidding on
 	// DFP), the deal id from the exchange's namespace that is associated with
-	// this bid and reported to publishers.  Leave unset if there is no
+	// this bid and reported to publishers. Leave unset if there is no
 	// associated deal. This is arbitrary UTF8 text and must be at most 64
 	// bytes.
 	ExchangeDealId   *string                                 `protobuf:"bytes,6,opt,name=exchange_deal_id,json=exchangeDealId" json:"exchange_deal_id,omitempty"`
@@ -6701,7 +6701,7 @@ func (x *BidResponse_Ad_SdkRenderedAd) GetRenderingData() string {
 }
 
 // Advertiser's SKAdNetwork information to support app installation
-// attribution for iOS 14 and later.  Apple's SKAdNetwork API helps
+// attribution for iOS 14 and later. Apple's SKAdNetwork API helps
 // advertisers measure ad-driven app installation by sending a postback
 // to the ad network after a successful install. Ad networks will need
 // to send their network ID and signed advertiser information to allow
