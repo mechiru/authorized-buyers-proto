@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = ".;openrtbadx";
-// Protocol version: v.53
+// Protocol version: v.54
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -385,6 +385,7 @@ message SiteExt {
   }
   // Whether this is an AMP page or not. Omitted if unknown.
   optional AmpPage amp = 1;
+
 }
 
 extend com.google.openrtb.BidRequest.Site {
