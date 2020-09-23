@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.183
+// Protocol version: v.184
 // Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
@@ -961,15 +961,6 @@ message BidRequest {
         optional CreativeSourceType creative_source = 16
             [default = CREATIVE_SOURCE_ADVERTISER];
 
-        // This field is deprecated in favor of the boolean must_bid field
-        // below as of December 2019. It will be removed from the protocol in
-        // August 2020.
-        // Value between 0 and 1 only set for Programmatic Guaranteed deals.
-        // Buyers are required to bid if must_bid_level = 1 and can decide
-        // whether to bid if must_bid_level < 1.
-        optional double DEPRECATED_must_bid_level = 7
-            [default = 1.0, deprecated = true];
-
         // This field is only applicable to Programmatic Guaranteed deals. The
         // buyer is allowed to skip bidding on the impression if this field is
         // false. When it is true, the buyer is required to bid on this deal for
@@ -1816,4 +1807,10 @@ message BidResponse {
   // received the request to when you returned the response.
   optional int32 processing_time_ms = 4;
 
+  // An optional, bidder-specified reason for not submitting a bid. This field
+  // is equivalent to BidResponse.nbr in the OpenRTB protocol and uses the same
+  // namespace of no-bid reason codes. See
+  // https://developers.google.com/authorized-buyers/rtb/downloads/no-bid-reasons.txt
+  // for the full set of no-bid reason codes.
+  optional int32 no_bid_reason = 6;
 }
