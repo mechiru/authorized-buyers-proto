@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.184
+// Protocol version: v.185
 // Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
@@ -1339,6 +1339,16 @@ message BidRequest {
       optional string data = 2;
     }
     repeated BuyerGeneratedRequestData buyer_generated_request_data = 41;
+
+    // Identifier of the OM SDK integration. For more info, see the OpenRTB
+    // Advisory for Open Measurement SDK:
+    // https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/OpenRTB%20support%20for%20OMSDK.md#openrtb-and-adcom.
+    optional string omidpn = 56;
+
+    // Version of the OM SDK integration. For more info, see the OpenRTB
+    // Advisory for Open Measurement SDK:
+    // https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/OpenRTB%20support%20for%20OMSDK.md#openrtb-and-adcom.
+    optional string omidpv = 57;
   }
   repeated AdSlot adslot = 14;
 
@@ -1680,22 +1690,6 @@ message BidResponse {
       // IDs with fewer than 1000 impressions will not be used to break down
       // metrics. IDs longer than 64 bytes will be ignored.
       optional string buyer_reporting_id = 8;
-
-      // This field is deprecated as of July 8, 2020 and will be removed July
-      // 31, 2020.
-      //
-      // This field is applicable only for bid requests that are marked as
-      // first price, and will otherwise be ignored. If the field is set to
-      // true on a first price request, then the bid will go through a bid
-      // translation service that converts the second price bid into a first
-      // price bid for participation in the first price auction (i.e. may
-      // reduce but will never increase the bid). If the field is not set,
-      // then for first price eligible queries the bid will be treated as a
-      // first price bid. This field is a temporary product for bidders that
-      // require assistance migrating to 1st price bidding.
-      optional bool DEPRECATED_use_bid_translation_service = 10
-          [deprecated = true];
-
       // Token used to identify end third party buyer information if an
       // exchange as an open bidder is an intermediary. This is obtained from
       // the third party buyer and must be passed to Google unaltered in the bid
