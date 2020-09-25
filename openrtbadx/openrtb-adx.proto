@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = ".;openrtbadx";
-// Protocol version: v.54
+// Protocol version: v.55
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -239,22 +239,6 @@ message BidExt {
   // and the bidder does not have any active child seats, this field
   // is not required and its contents will be ignored.
   optional int64 billing_id = 10;
-
-
-  // This field is deprecated as of July 8, 2020 and will be removed July 31,
-  // 2020.
-  //
-  // [AdX: BidResponse.Ad.AdSlot.use_bid_translation_service]
-  // This field is applicable only for bid requests that are marked as first
-  // price, and will otherwise be ignored. If the field is set to true on a
-  // first price request, then the bid will go through a bid translation service
-  // that converts the second price bid into a first price bid for
-  // participation in the first price auction (i.e. may reduce but will
-  // never increase the bid). If the field is not set, then for first price
-  // eligible queries the bid will be treated as a first price bid. This
-  // field is a temporary product for bidders that require assistance
-  // migrating to 1st price bidding.
-  optional bool DEPRECATED_use_bid_translation_service = 12;
 
   // Token used to identify end third party buyer information if an
   // exchange as an open bidder is an intermediary. This is obtained from the
@@ -616,4 +600,22 @@ message DealExt {
 extend com.google.openrtb.BidRequest.Imp.Pmp.Deal {
   // Extension key for AdX Deal.ext.
   optional DealExt deal = 1010;
+}
+
+message SourceExt {
+  // Identifier of the OM SDK integration. Equivalent to
+  // BidRequest.AdSlot.omidpn in the Google protocol. For more info,
+  // see the OpenRTB Advisory for Open Measurement SDK:
+  // https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/OpenRTB%20support%20for%20OMSDK.md#openrtb-and-adcom.
+  optional string omidpn = 1;
+  // Version of the OM SDK integration. Equivalent to BidRequest.AdSlot.omidpv
+  // in the Google protocol. For more info, see the OpenRTB Advisory for
+  // Open Measurement SDK:
+  // https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/OpenRTB%20support%20for%20OMSDK.md#openrtb-and-adcom.
+  optional string omidpv = 2;
+}
+
+extend com.google.openrtb.BidRequest.Source {
+  // Extension key for Source.ext
+  optional SourceExt source = 1059;
 }
