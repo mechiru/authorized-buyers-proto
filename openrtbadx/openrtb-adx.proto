@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = ".;openrtbadx";
-// Protocol version: v.55
+// Protocol version: v.56
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -182,8 +182,9 @@ message BidExt {
   // [AdX: BidResponse.Ad.ad_choices_destination_url]
   optional string ad_choices_destination_url = 2;
 
+  // This field is deprecated due to being unused.
   // [AdX: BidResponse.Ad.bidder_name]
-  optional string bidder_name = 3;
+  optional string DEPRECATED_bidder_name = 3 [deprecated = true];
 
   // [AdX: BidResponse.Ad.AdSlot.exchange_deal_type]
   enum ExchangeDealType {

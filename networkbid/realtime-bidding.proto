@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.185
+// Protocol version: v.186
 // Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
@@ -1603,12 +1603,13 @@ message BidResponse {
     // All names of the ad's advertisers.
     repeated string advertiser_name = 11;
 
+    // This field is deprecated due to being unused.
     // For exchange bidders (third party exchanges doing real-time bidding on
     // DFP), the name of the bidder that the exchange called to provide the ad.
     // This is arbitrary UTF8 text but should be sufficient to identify the
     // bidder and should be set consistently to the same value for the same
     // bidder.
-    optional string bidder_name = 22;
+    optional string DEPRECATED_bidder_name = 22 [deprecated = true];
 
     // The width and the height in pixels of the ad. Setting these is optional.
     // However, these must be set if the bid BidRequest.AdSlot has more than one
@@ -1690,6 +1691,7 @@ message BidResponse {
       // IDs with fewer than 1000 impressions will not be used to break down
       // metrics. IDs longer than 64 bytes will be ignored.
       optional string buyer_reporting_id = 8;
+
       // Token used to identify end third party buyer information if an
       // exchange as an open bidder is an intermediary. This is obtained from
       // the third party buyer and must be passed to Google unaltered in the bid
