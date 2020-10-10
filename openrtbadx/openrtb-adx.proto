@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = ".;openrtbadx";
-// Protocol version: v.56
+// Protocol version: v.57
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -167,6 +167,7 @@ extend com.google.openrtb.BidRequest.App {
 message BidResponseExt {
   // [AdX: BidResponse.processing_time_ms]
   optional int32 processing_time_ms = 1;
+
 }
 
 extend com.google.openrtb.BidResponse {
@@ -294,6 +295,7 @@ message BidExt {
 
   // [AdX: BidResponse.Ad.skadn]
   optional SKAdNetworkResponse skadn = 19;
+
 }
 
 extend com.google.openrtb.BidResponse.SeatBid.Bid {
@@ -371,6 +373,11 @@ message SiteExt {
   // Whether this is an AMP page or not. Omitted if unknown.
   optional AmpPage amp = 1;
 
+  // Indicates that the request is using semi-transparent branding,
+  // which means only a truncated version of the request URL will
+  // be provided.  This decision is made by the publisher, see
+  // https://support.google.com/admanager/answer/4584891#urls for context.
+  optional bool is_semi_transparent_request = 3;
 }
 
 extend com.google.openrtb.BidRequest.Site {
