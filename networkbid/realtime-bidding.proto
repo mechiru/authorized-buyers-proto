@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.186
+// Protocol version: v.187
 // Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
@@ -175,6 +175,11 @@ message BidRequest {
   // same request. This always starts with a protocol (either http or https).
   optional string url = 11;
 
+  // Indicates that the request is using semi-transparent branding,
+  // which means only a truncated version of the request URL will
+  // be provided. This decision is made by the publisher, see
+  // https://support.google.com/admanager/answer/4584891#urls for context.
+  optional bool is_semi_transparent_request = 67;
 
   // An id for the domain of the page. This is set when the inventory is
   // anonymous. Only one of url or anonymous_id is ever set in the same
@@ -1697,6 +1702,7 @@ message BidResponse {
       // the third party buyer and must be passed to Google unaltered in the bid
       // response.
       optional string third_party_buyer_token = 12;
+
     }
     repeated AdSlot adslot = 3;
 
@@ -1809,4 +1815,6 @@ message BidResponse {
   // https://developers.google.com/authorized-buyers/rtb/downloads/no-bid-reasons.txt
   // for the full set of no-bid reason codes.
   optional int32 no_bid_reason = 6;
+
+
 }
