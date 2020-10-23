@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = ".;openrtbadx";
-// Protocol version: v.57
+// Protocol version: v.58
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -372,6 +372,21 @@ message SiteExt {
   }
   // Whether this is an AMP page or not. Omitted if unknown.
   optional AmpPage amp = 1;
+
+  enum VisibilityState {
+    VISIBILITY_STATE_UNKNOWN = 0;
+    // The page is at least partially visible. For example, in the foreground
+    // tab of a non-minimized window.
+    VISIBILITY_STATE_VISIBLE = 1;
+    // The page is not visible at all to users. For example, when the page is
+    // on a background browser tab, or in a minimized window.
+    VISIBILITY_STATE_HIDDEN = 2;
+  }
+  // The visibility state of the web page containing the ad slot.
+  // See https://www.w3.org/TR/page-visibility/.
+  // [AdX: BidRequest.page_visibility]
+  optional VisibilityState page_visibility = 2
+      [default = VISIBILITY_STATE_UNKNOWN];
 
   // Indicates that the request is using semi-transparent branding,
   // which means only a truncated version of the request URL will

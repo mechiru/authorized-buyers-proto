@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.187
+// Protocol version: v.188
 // Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
@@ -688,6 +688,20 @@ message BidRequest {
     GOOGLE_REPRESENTED = 3;
   }
   optional PublisherType publisher_type = 51 [default = UNKNOWN_PUBLISHER_TYPE];
+
+  enum VisibilityState {
+    VISIBILITY_STATE_UNKNOWN = 0;
+    // The page is at least partially visible. For example, in the foreground
+    // tab of a non-minimized window.
+    VISIBILITY_STATE_VISIBLE = 1;
+    // The page is not visible at all to users. For example, when the page is
+    // on a background browser tab, or in a minimized window.
+    VISIBILITY_STATE_HIDDEN = 2;
+  }
+  // The visibility state of the web page containing the ad slots.
+  // See https://www.w3.org/TR/page-visibility/.
+  optional VisibilityState page_visibility = 66
+      [default = VISIBILITY_STATE_UNKNOWN];
 
   // -----------------------------------------------------------
   // Information about the adslots on the page.
