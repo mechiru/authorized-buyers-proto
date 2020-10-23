@@ -335,6 +335,69 @@ func (SiteExt_AmpPage) EnumDescriptor() ([]byte, []int) {
 	return file_openrtb_adx_proto_rawDescGZIP(), []int{7, 0}
 }
 
+type SiteExt_VisibilityState int32
+
+const (
+	SiteExt_VISIBILITY_STATE_UNKNOWN SiteExt_VisibilityState = 0
+	// The page is at least partially visible. For example, in the foreground
+	// tab of a non-minimized window.
+	SiteExt_VISIBILITY_STATE_VISIBLE SiteExt_VisibilityState = 1
+	// The page is not visible at all to users. For example, when the page is
+	// on a background browser tab, or in a minimized window.
+	SiteExt_VISIBILITY_STATE_HIDDEN SiteExt_VisibilityState = 2
+)
+
+// Enum value maps for SiteExt_VisibilityState.
+var (
+	SiteExt_VisibilityState_name = map[int32]string{
+		0: "VISIBILITY_STATE_UNKNOWN",
+		1: "VISIBILITY_STATE_VISIBLE",
+		2: "VISIBILITY_STATE_HIDDEN",
+	}
+	SiteExt_VisibilityState_value = map[string]int32{
+		"VISIBILITY_STATE_UNKNOWN": 0,
+		"VISIBILITY_STATE_VISIBLE": 1,
+		"VISIBILITY_STATE_HIDDEN":  2,
+	}
+)
+
+func (x SiteExt_VisibilityState) Enum() *SiteExt_VisibilityState {
+	p := new(SiteExt_VisibilityState)
+	*p = x
+	return p
+}
+
+func (x SiteExt_VisibilityState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SiteExt_VisibilityState) Descriptor() protoreflect.EnumDescriptor {
+	return file_openrtb_adx_proto_enumTypes[5].Descriptor()
+}
+
+func (SiteExt_VisibilityState) Type() protoreflect.EnumType {
+	return &file_openrtb_adx_proto_enumTypes[5]
+}
+
+func (x SiteExt_VisibilityState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Do not use.
+func (x *SiteExt_VisibilityState) UnmarshalJSON(b []byte) error {
+	num, err := protoimpl.X.UnmarshalJSONEnum(x.Descriptor(), b)
+	if err != nil {
+		return err
+	}
+	*x = SiteExt_VisibilityState(num)
+	return nil
+}
+
+// Deprecated: Use SiteExt_VisibilityState.Descriptor instead.
+func (SiteExt_VisibilityState) EnumDescriptor() ([]byte, []int) {
+	return file_openrtb_adx_proto_rawDescGZIP(), []int{7, 1}
+}
+
 // The type of the deal. Note that Authorized Buyers policy overrides apply to
 // all Programmatic Guaranteed and Preferred Deal bids, and do not apply to
 // bids for other deal types.
@@ -395,11 +458,11 @@ func (x DealExt_DealType) String() string {
 }
 
 func (DealExt_DealType) Descriptor() protoreflect.EnumDescriptor {
-	return file_openrtb_adx_proto_enumTypes[5].Descriptor()
+	return file_openrtb_adx_proto_enumTypes[6].Descriptor()
 }
 
 func (DealExt_DealType) Type() protoreflect.EnumType {
-	return &file_openrtb_adx_proto_enumTypes[5]
+	return &file_openrtb_adx_proto_enumTypes[6]
 }
 
 func (x DealExt_DealType) Number() protoreflect.EnumNumber {
@@ -466,11 +529,11 @@ func (x DealExt_CreativeSourceType) String() string {
 }
 
 func (DealExt_CreativeSourceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_openrtb_adx_proto_enumTypes[6].Descriptor()
+	return file_openrtb_adx_proto_enumTypes[7].Descriptor()
 }
 
 func (DealExt_CreativeSourceType) Type() protoreflect.EnumType {
-	return &file_openrtb_adx_proto_enumTypes[6]
+	return &file_openrtb_adx_proto_enumTypes[7]
 }
 
 func (x DealExt_CreativeSourceType) Number() protoreflect.EnumNumber {
@@ -1133,12 +1196,21 @@ type SiteExt struct {
 
 	// Whether this is an AMP page or not. Omitted if unknown.
 	Amp *SiteExt_AmpPage `protobuf:"varint,1,opt,name=amp,enum=com.google.doubleclick.SiteExt_AmpPage" json:"amp,omitempty"`
+	// The visibility state of the web page containing the ad slot.
+	// See https://www.w3.org/TR/page-visibility/.
+	// [AdX: BidRequest.page_visibility]
+	PageVisibility *SiteExt_VisibilityState `protobuf:"varint,2,opt,name=page_visibility,json=pageVisibility,enum=com.google.doubleclick.SiteExt_VisibilityState,def=0" json:"page_visibility,omitempty"`
 	// Indicates that the request is using semi-transparent branding,
 	// which means only a truncated version of the request URL will
 	// be provided.  This decision is made by the publisher, see
 	// https://support.google.com/admanager/answer/4584891#urls for context.
 	IsSemiTransparentRequest *bool `protobuf:"varint,3,opt,name=is_semi_transparent_request,json=isSemiTransparentRequest" json:"is_semi_transparent_request,omitempty"`
 }
+
+// Default values for SiteExt fields.
+const (
+	Default_SiteExt_PageVisibility = SiteExt_VISIBILITY_STATE_UNKNOWN
+)
 
 func (x *SiteExt) Reset() {
 	*x = SiteExt{}
@@ -1177,6 +1249,13 @@ func (x *SiteExt) GetAmp() SiteExt_AmpPage {
 		return *x.Amp
 	}
 	return SiteExt_DIALECT_HTML
+}
+
+func (x *SiteExt) GetPageVisibility() SiteExt_VisibilityState {
+	if x != nil && x.PageVisibility != nil {
+		return *x.PageVisibility
+	}
+	return Default_SiteExt_PageVisibility
 }
 
 func (x *SiteExt) GetIsSemiTransparentRequest() bool {
@@ -2974,19 +3053,33 @@ var file_openrtb_adx_proto_rawDesc = []byte{
 	0x07, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x4f, 0x4d,
 	0x49, 0x44, 0x10, 0x01, 0x22, 0x28, 0x0a, 0x0c, 0x50, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x65,
 	0x72, 0x45, 0x78, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79, 0x22, 0xb6,
-	0x01, 0x0a, 0x07, 0x53, 0x69, 0x74, 0x65, 0x45, 0x78, 0x74, 0x12, 0x39, 0x0a, 0x03, 0x61, 0x6d,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79, 0x22, 0x96,
+	0x03, 0x0a, 0x07, 0x53, 0x69, 0x74, 0x65, 0x45, 0x78, 0x74, 0x12, 0x39, 0x0a, 0x03, 0x61, 0x6d,
 	0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x67, 0x6f,
 	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x64, 0x6f, 0x75, 0x62, 0x6c, 0x65, 0x63, 0x6c, 0x69, 0x63, 0x6b,
 	0x2e, 0x53, 0x69, 0x74, 0x65, 0x45, 0x78, 0x74, 0x2e, 0x41, 0x6d, 0x70, 0x50, 0x61, 0x67, 0x65,
-	0x52, 0x03, 0x61, 0x6d, 0x70, 0x12, 0x3d, 0x0a, 0x1b, 0x69, 0x73, 0x5f, 0x73, 0x65, 0x6d, 0x69,
-	0x5f, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x61, 0x72, 0x65, 0x6e, 0x74, 0x5f, 0x72, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x18, 0x69, 0x73, 0x53, 0x65,
-	0x6d, 0x69, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x61, 0x72, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x22, 0x31, 0x0a, 0x07, 0x41, 0x6d, 0x70, 0x50, 0x61, 0x67, 0x65, 0x12,
-	0x10, 0x0a, 0x0c, 0x44, 0x49, 0x41, 0x4c, 0x45, 0x43, 0x54, 0x5f, 0x48, 0x54, 0x4d, 0x4c, 0x10,
-	0x00, 0x12, 0x14, 0x0a, 0x10, 0x44, 0x49, 0x41, 0x4c, 0x45, 0x43, 0x54, 0x5f, 0x48, 0x54, 0x4d,
-	0x4c, 0x5f, 0x41, 0x4d, 0x50, 0x10, 0x01, 0x22, 0xf6, 0x04, 0x0a, 0x0d, 0x42, 0x69, 0x64, 0x52,
+	0x52, 0x03, 0x61, 0x6d, 0x70, 0x12, 0x72, 0x0a, 0x0f, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x76, 0x69,
+	0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x2f,
+	0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x64, 0x6f, 0x75, 0x62,
+	0x6c, 0x65, 0x63, 0x6c, 0x69, 0x63, 0x6b, 0x2e, 0x53, 0x69, 0x74, 0x65, 0x45, 0x78, 0x74, 0x2e,
+	0x56, 0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x53, 0x74, 0x61, 0x74, 0x65, 0x3a,
+	0x18, 0x56, 0x49, 0x53, 0x49, 0x42, 0x49, 0x4c, 0x49, 0x54, 0x59, 0x5f, 0x53, 0x54, 0x41, 0x54,
+	0x45, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x52, 0x0e, 0x70, 0x61, 0x67, 0x65, 0x56,
+	0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x12, 0x3d, 0x0a, 0x1b, 0x69, 0x73, 0x5f,
+	0x73, 0x65, 0x6d, 0x69, 0x5f, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x61, 0x72, 0x65, 0x6e, 0x74,
+	0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x18,
+	0x69, 0x73, 0x53, 0x65, 0x6d, 0x69, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x70, 0x61, 0x72, 0x65, 0x6e,
+	0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x31, 0x0a, 0x07, 0x41, 0x6d, 0x70, 0x50,
+	0x61, 0x67, 0x65, 0x12, 0x10, 0x0a, 0x0c, 0x44, 0x49, 0x41, 0x4c, 0x45, 0x43, 0x54, 0x5f, 0x48,
+	0x54, 0x4d, 0x4c, 0x10, 0x00, 0x12, 0x14, 0x0a, 0x10, 0x44, 0x49, 0x41, 0x4c, 0x45, 0x43, 0x54,
+	0x5f, 0x48, 0x54, 0x4d, 0x4c, 0x5f, 0x41, 0x4d, 0x50, 0x10, 0x01, 0x22, 0x6a, 0x0a, 0x0f, 0x56,
+	0x69, 0x73, 0x69, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x1c,
+	0x0a, 0x18, 0x56, 0x49, 0x53, 0x49, 0x42, 0x49, 0x4c, 0x49, 0x54, 0x59, 0x5f, 0x53, 0x54, 0x41,
+	0x54, 0x45, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x1c, 0x0a, 0x18,
+	0x56, 0x49, 0x53, 0x49, 0x42, 0x49, 0x4c, 0x49, 0x54, 0x59, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x45,
+	0x5f, 0x56, 0x49, 0x53, 0x49, 0x42, 0x4c, 0x45, 0x10, 0x01, 0x12, 0x1b, 0x0a, 0x17, 0x56, 0x49,
+	0x53, 0x49, 0x42, 0x49, 0x4c, 0x49, 0x54, 0x59, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x45, 0x5f, 0x48,
+	0x49, 0x44, 0x44, 0x45, 0x4e, 0x10, 0x02, 0x22, 0xf6, 0x04, 0x0a, 0x0d, 0x42, 0x69, 0x64, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x45, 0x78, 0x74, 0x12, 0x54, 0x0a, 0x0c, 0x62, 0x69, 0x64,
 	0x5f, 0x66, 0x65, 0x65, 0x64, 0x62, 0x61, 0x63, 0x6b, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
 	0x31, 0x2e, 0x63, 0x6f, 0x6d, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x64, 0x6f, 0x75,
@@ -3190,7 +3283,7 @@ func file_openrtb_adx_proto_rawDescGZIP() []byte {
 	return file_openrtb_adx_proto_rawDescData
 }
 
-var file_openrtb_adx_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
+var file_openrtb_adx_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
 var file_openrtb_adx_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_openrtb_adx_proto_goTypes = []interface{}{
 	(ImpExt_AmpAdRequirementType)(0),                         // 0: com.google.doubleclick.ImpExt.AmpAdRequirementType
@@ -3198,105 +3291,107 @@ var file_openrtb_adx_proto_goTypes = []interface{}{
 	(NativeRequestExt_LayoutType)(0),                         // 2: com.google.doubleclick.NativeRequestExt.LayoutType
 	(EventTrackerExt_Context)(0),                             // 3: com.google.doubleclick.EventTrackerExt.Context
 	(SiteExt_AmpPage)(0),                                     // 4: com.google.doubleclick.SiteExt.AmpPage
-	(DealExt_DealType)(0),                                    // 5: com.google.doubleclick.DealExt.DealType
-	(DealExt_CreativeSourceType)(0),                          // 6: com.google.doubleclick.DealExt.CreativeSourceType
-	(*ImpExt)(nil),                                           // 7: com.google.doubleclick.ImpExt
-	(*AppExt)(nil),                                           // 8: com.google.doubleclick.AppExt
-	(*BidResponseExt)(nil),                                   // 9: com.google.doubleclick.BidResponseExt
-	(*BidExt)(nil),                                           // 10: com.google.doubleclick.BidExt
-	(*NativeRequestExt)(nil),                                 // 11: com.google.doubleclick.NativeRequestExt
-	(*EventTrackerExt)(nil),                                  // 12: com.google.doubleclick.EventTrackerExt
-	(*PublisherExt)(nil),                                     // 13: com.google.doubleclick.PublisherExt
-	(*SiteExt)(nil),                                          // 14: com.google.doubleclick.SiteExt
-	(*BidRequestExt)(nil),                                    // 15: com.google.doubleclick.BidRequestExt
-	(*UserExt)(nil),                                          // 16: com.google.doubleclick.UserExt
-	(*DeviceExt)(nil),                                        // 17: com.google.doubleclick.DeviceExt
-	(*RegsExt)(nil),                                          // 18: com.google.doubleclick.RegsExt
-	(*DealExt)(nil),                                          // 19: com.google.doubleclick.DealExt
-	(*SourceExt)(nil),                                        // 20: com.google.doubleclick.SourceExt
-	(*ImpExt_ExcludedCreative)(nil),                          // 21: com.google.doubleclick.ImpExt.ExcludedCreative
-	(*ImpExt_BuyerGeneratedRequestData)(nil),                 // 22: com.google.doubleclick.ImpExt.BuyerGeneratedRequestData
-	(*ImpExt_OpenBidding)(nil),                               // 23: com.google.doubleclick.ImpExt.OpenBidding
-	(*ImpExt_SKAdNetworkRequest)(nil),                        // 24: com.google.doubleclick.ImpExt.SKAdNetworkRequest
-	(*ImpExt_BuyerGeneratedRequestData_SourceApp)(nil),       // 25: com.google.doubleclick.ImpExt.BuyerGeneratedRequestData.SourceApp
-	(*AppExt_InstalledSdk)(nil),                              // 26: com.google.doubleclick.AppExt.InstalledSdk
-	(*AppExt_InstalledSdk_Version)(nil),                      // 27: com.google.doubleclick.AppExt.InstalledSdk.Version
-	(*BidExt_SdkRenderedAd)(nil),                             // 28: com.google.doubleclick.BidExt.SdkRenderedAd
-	(*BidExt_EventNotificationToken)(nil),                    // 29: com.google.doubleclick.BidExt.EventNotificationToken
-	(*BidExt_SKAdNetworkResponse)(nil),                       // 30: com.google.doubleclick.BidExt.SKAdNetworkResponse
-	(*BidRequestExt_BidFeedback)(nil),                        // 31: com.google.doubleclick.BidRequestExt.BidFeedback
-	(*BidRequestExt_BidFeedback_EventNotificationToken)(nil), // 32: com.google.doubleclick.BidRequestExt.BidFeedback.EventNotificationToken
-	(*UserExt_ConsentedProvidersSettings)(nil),               // 33: com.google.doubleclick.UserExt.ConsentedProvidersSettings
-	(*BidRequest_Imp)(nil),                                   // 34: com.google.openrtb.BidRequest.Imp
-	(*BidRequest_App)(nil),                                   // 35: com.google.openrtb.BidRequest.App
-	(*BidResponse)(nil),                                      // 36: com.google.openrtb.BidResponse
-	(*BidResponse_SeatBid_Bid)(nil),                          // 37: com.google.openrtb.BidResponse.SeatBid.Bid
-	(*NativeRequest)(nil),                                    // 38: com.google.openrtb.NativeRequest
-	(*NativeResponse_EventTracker)(nil),                      // 39: com.google.openrtb.NativeResponse.EventTracker
-	(*BidRequest_Publisher)(nil),                             // 40: com.google.openrtb.BidRequest.Publisher
-	(*BidRequest_Site)(nil),                                  // 41: com.google.openrtb.BidRequest.Site
-	(*BidRequest)(nil),                                       // 42: com.google.openrtb.BidRequest
-	(*BidRequest_User)(nil),                                  // 43: com.google.openrtb.BidRequest.User
-	(*BidRequest_Device)(nil),                                // 44: com.google.openrtb.BidRequest.Device
-	(*BidRequest_Regs)(nil),                                  // 45: com.google.openrtb.BidRequest.Regs
-	(*BidRequest_Imp_Pmp_Deal)(nil),                          // 46: com.google.openrtb.BidRequest.Imp.Pmp.Deal
-	(*BidRequest_Source)(nil),                                // 47: com.google.openrtb.BidRequest.Source
+	(SiteExt_VisibilityState)(0),                             // 5: com.google.doubleclick.SiteExt.VisibilityState
+	(DealExt_DealType)(0),                                    // 6: com.google.doubleclick.DealExt.DealType
+	(DealExt_CreativeSourceType)(0),                          // 7: com.google.doubleclick.DealExt.CreativeSourceType
+	(*ImpExt)(nil),                                           // 8: com.google.doubleclick.ImpExt
+	(*AppExt)(nil),                                           // 9: com.google.doubleclick.AppExt
+	(*BidResponseExt)(nil),                                   // 10: com.google.doubleclick.BidResponseExt
+	(*BidExt)(nil),                                           // 11: com.google.doubleclick.BidExt
+	(*NativeRequestExt)(nil),                                 // 12: com.google.doubleclick.NativeRequestExt
+	(*EventTrackerExt)(nil),                                  // 13: com.google.doubleclick.EventTrackerExt
+	(*PublisherExt)(nil),                                     // 14: com.google.doubleclick.PublisherExt
+	(*SiteExt)(nil),                                          // 15: com.google.doubleclick.SiteExt
+	(*BidRequestExt)(nil),                                    // 16: com.google.doubleclick.BidRequestExt
+	(*UserExt)(nil),                                          // 17: com.google.doubleclick.UserExt
+	(*DeviceExt)(nil),                                        // 18: com.google.doubleclick.DeviceExt
+	(*RegsExt)(nil),                                          // 19: com.google.doubleclick.RegsExt
+	(*DealExt)(nil),                                          // 20: com.google.doubleclick.DealExt
+	(*SourceExt)(nil),                                        // 21: com.google.doubleclick.SourceExt
+	(*ImpExt_ExcludedCreative)(nil),                          // 22: com.google.doubleclick.ImpExt.ExcludedCreative
+	(*ImpExt_BuyerGeneratedRequestData)(nil),                 // 23: com.google.doubleclick.ImpExt.BuyerGeneratedRequestData
+	(*ImpExt_OpenBidding)(nil),                               // 24: com.google.doubleclick.ImpExt.OpenBidding
+	(*ImpExt_SKAdNetworkRequest)(nil),                        // 25: com.google.doubleclick.ImpExt.SKAdNetworkRequest
+	(*ImpExt_BuyerGeneratedRequestData_SourceApp)(nil),       // 26: com.google.doubleclick.ImpExt.BuyerGeneratedRequestData.SourceApp
+	(*AppExt_InstalledSdk)(nil),                              // 27: com.google.doubleclick.AppExt.InstalledSdk
+	(*AppExt_InstalledSdk_Version)(nil),                      // 28: com.google.doubleclick.AppExt.InstalledSdk.Version
+	(*BidExt_SdkRenderedAd)(nil),                             // 29: com.google.doubleclick.BidExt.SdkRenderedAd
+	(*BidExt_EventNotificationToken)(nil),                    // 30: com.google.doubleclick.BidExt.EventNotificationToken
+	(*BidExt_SKAdNetworkResponse)(nil),                       // 31: com.google.doubleclick.BidExt.SKAdNetworkResponse
+	(*BidRequestExt_BidFeedback)(nil),                        // 32: com.google.doubleclick.BidRequestExt.BidFeedback
+	(*BidRequestExt_BidFeedback_EventNotificationToken)(nil), // 33: com.google.doubleclick.BidRequestExt.BidFeedback.EventNotificationToken
+	(*UserExt_ConsentedProvidersSettings)(nil),               // 34: com.google.doubleclick.UserExt.ConsentedProvidersSettings
+	(*BidRequest_Imp)(nil),                                   // 35: com.google.openrtb.BidRequest.Imp
+	(*BidRequest_App)(nil),                                   // 36: com.google.openrtb.BidRequest.App
+	(*BidResponse)(nil),                                      // 37: com.google.openrtb.BidResponse
+	(*BidResponse_SeatBid_Bid)(nil),                          // 38: com.google.openrtb.BidResponse.SeatBid.Bid
+	(*NativeRequest)(nil),                                    // 39: com.google.openrtb.NativeRequest
+	(*NativeResponse_EventTracker)(nil),                      // 40: com.google.openrtb.NativeResponse.EventTracker
+	(*BidRequest_Publisher)(nil),                             // 41: com.google.openrtb.BidRequest.Publisher
+	(*BidRequest_Site)(nil),                                  // 42: com.google.openrtb.BidRequest.Site
+	(*BidRequest)(nil),                                       // 43: com.google.openrtb.BidRequest
+	(*BidRequest_User)(nil),                                  // 44: com.google.openrtb.BidRequest.User
+	(*BidRequest_Device)(nil),                                // 45: com.google.openrtb.BidRequest.Device
+	(*BidRequest_Regs)(nil),                                  // 46: com.google.openrtb.BidRequest.Regs
+	(*BidRequest_Imp_Pmp_Deal)(nil),                          // 47: com.google.openrtb.BidRequest.Imp.Pmp.Deal
+	(*BidRequest_Source)(nil),                                // 48: com.google.openrtb.BidRequest.Source
 }
 var file_openrtb_adx_proto_depIdxs = []int32{
-	21, // 0: com.google.doubleclick.ImpExt.excluded_creatives:type_name -> com.google.doubleclick.ImpExt.ExcludedCreative
+	22, // 0: com.google.doubleclick.ImpExt.excluded_creatives:type_name -> com.google.doubleclick.ImpExt.ExcludedCreative
 	0,  // 1: com.google.doubleclick.ImpExt.ampad:type_name -> com.google.doubleclick.ImpExt.AmpAdRequirementType
-	22, // 2: com.google.doubleclick.ImpExt.buyer_generated_request_data:type_name -> com.google.doubleclick.ImpExt.BuyerGeneratedRequestData
-	23, // 3: com.google.doubleclick.ImpExt.open_bidding:type_name -> com.google.doubleclick.ImpExt.OpenBidding
-	24, // 4: com.google.doubleclick.ImpExt.skadn:type_name -> com.google.doubleclick.ImpExt.SKAdNetworkRequest
-	26, // 5: com.google.doubleclick.AppExt.installed_sdk:type_name -> com.google.doubleclick.AppExt.InstalledSdk
+	23, // 2: com.google.doubleclick.ImpExt.buyer_generated_request_data:type_name -> com.google.doubleclick.ImpExt.BuyerGeneratedRequestData
+	24, // 3: com.google.doubleclick.ImpExt.open_bidding:type_name -> com.google.doubleclick.ImpExt.OpenBidding
+	25, // 4: com.google.doubleclick.ImpExt.skadn:type_name -> com.google.doubleclick.ImpExt.SKAdNetworkRequest
+	27, // 5: com.google.doubleclick.AppExt.installed_sdk:type_name -> com.google.doubleclick.AppExt.InstalledSdk
 	1,  // 6: com.google.doubleclick.BidExt.exchange_deal_type:type_name -> com.google.doubleclick.BidExt.ExchangeDealType
-	28, // 7: com.google.doubleclick.BidExt.sdk_rendered_ad:type_name -> com.google.doubleclick.BidExt.SdkRenderedAd
-	29, // 8: com.google.doubleclick.BidExt.event_notification_token:type_name -> com.google.doubleclick.BidExt.EventNotificationToken
-	30, // 9: com.google.doubleclick.BidExt.skadn:type_name -> com.google.doubleclick.BidExt.SKAdNetworkResponse
+	29, // 7: com.google.doubleclick.BidExt.sdk_rendered_ad:type_name -> com.google.doubleclick.BidExt.SdkRenderedAd
+	30, // 8: com.google.doubleclick.BidExt.event_notification_token:type_name -> com.google.doubleclick.BidExt.EventNotificationToken
+	31, // 9: com.google.doubleclick.BidExt.skadn:type_name -> com.google.doubleclick.BidExt.SKAdNetworkResponse
 	2,  // 10: com.google.doubleclick.NativeRequestExt.style_layout_type:type_name -> com.google.doubleclick.NativeRequestExt.LayoutType
 	3,  // 11: com.google.doubleclick.EventTrackerExt.context:type_name -> com.google.doubleclick.EventTrackerExt.Context
 	4,  // 12: com.google.doubleclick.SiteExt.amp:type_name -> com.google.doubleclick.SiteExt.AmpPage
-	31, // 13: com.google.doubleclick.BidRequestExt.bid_feedback:type_name -> com.google.doubleclick.BidRequestExt.BidFeedback
-	33, // 14: com.google.doubleclick.UserExt.consented_providers_settings:type_name -> com.google.doubleclick.UserExt.ConsentedProvidersSettings
-	5,  // 15: com.google.doubleclick.DealExt.deal_type:type_name -> com.google.doubleclick.DealExt.DealType
-	6,  // 16: com.google.doubleclick.DealExt.creative_source:type_name -> com.google.doubleclick.DealExt.CreativeSourceType
-	25, // 17: com.google.doubleclick.ImpExt.BuyerGeneratedRequestData.source_app:type_name -> com.google.doubleclick.ImpExt.BuyerGeneratedRequestData.SourceApp
-	27, // 18: com.google.doubleclick.AppExt.InstalledSdk.sdk_version:type_name -> com.google.doubleclick.AppExt.InstalledSdk.Version
-	27, // 19: com.google.doubleclick.AppExt.InstalledSdk.adapter_version:type_name -> com.google.doubleclick.AppExt.InstalledSdk.Version
-	32, // 20: com.google.doubleclick.BidRequestExt.BidFeedback.event_notification_token:type_name -> com.google.doubleclick.BidRequestExt.BidFeedback.EventNotificationToken
-	34, // 21: com.google.doubleclick.imp:extendee -> com.google.openrtb.BidRequest.Imp
-	35, // 22: com.google.doubleclick.app:extendee -> com.google.openrtb.BidRequest.App
-	36, // 23: com.google.doubleclick.bid_response:extendee -> com.google.openrtb.BidResponse
-	37, // 24: com.google.doubleclick.bid:extendee -> com.google.openrtb.BidResponse.SeatBid.Bid
-	38, // 25: com.google.doubleclick.native_ext:extendee -> com.google.openrtb.NativeRequest
-	39, // 26: com.google.doubleclick.eventtrackers:extendee -> com.google.openrtb.NativeResponse.EventTracker
-	40, // 27: com.google.doubleclick.publisher:extendee -> com.google.openrtb.BidRequest.Publisher
-	41, // 28: com.google.doubleclick.site:extendee -> com.google.openrtb.BidRequest.Site
-	42, // 29: com.google.doubleclick.bid_request:extendee -> com.google.openrtb.BidRequest
-	43, // 30: com.google.doubleclick.user:extendee -> com.google.openrtb.BidRequest.User
-	44, // 31: com.google.doubleclick.device:extendee -> com.google.openrtb.BidRequest.Device
-	45, // 32: com.google.doubleclick.regs:extendee -> com.google.openrtb.BidRequest.Regs
-	46, // 33: com.google.doubleclick.deal:extendee -> com.google.openrtb.BidRequest.Imp.Pmp.Deal
-	47, // 34: com.google.doubleclick.source:extendee -> com.google.openrtb.BidRequest.Source
-	7,  // 35: com.google.doubleclick.imp:type_name -> com.google.doubleclick.ImpExt
-	8,  // 36: com.google.doubleclick.app:type_name -> com.google.doubleclick.AppExt
-	9,  // 37: com.google.doubleclick.bid_response:type_name -> com.google.doubleclick.BidResponseExt
-	10, // 38: com.google.doubleclick.bid:type_name -> com.google.doubleclick.BidExt
-	11, // 39: com.google.doubleclick.native_ext:type_name -> com.google.doubleclick.NativeRequestExt
-	12, // 40: com.google.doubleclick.eventtrackers:type_name -> com.google.doubleclick.EventTrackerExt
-	13, // 41: com.google.doubleclick.publisher:type_name -> com.google.doubleclick.PublisherExt
-	14, // 42: com.google.doubleclick.site:type_name -> com.google.doubleclick.SiteExt
-	15, // 43: com.google.doubleclick.bid_request:type_name -> com.google.doubleclick.BidRequestExt
-	16, // 44: com.google.doubleclick.user:type_name -> com.google.doubleclick.UserExt
-	17, // 45: com.google.doubleclick.device:type_name -> com.google.doubleclick.DeviceExt
-	18, // 46: com.google.doubleclick.regs:type_name -> com.google.doubleclick.RegsExt
-	19, // 47: com.google.doubleclick.deal:type_name -> com.google.doubleclick.DealExt
-	20, // 48: com.google.doubleclick.source:type_name -> com.google.doubleclick.SourceExt
-	49, // [49:49] is the sub-list for method output_type
-	49, // [49:49] is the sub-list for method input_type
-	35, // [35:49] is the sub-list for extension type_name
-	21, // [21:35] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	5,  // 13: com.google.doubleclick.SiteExt.page_visibility:type_name -> com.google.doubleclick.SiteExt.VisibilityState
+	32, // 14: com.google.doubleclick.BidRequestExt.bid_feedback:type_name -> com.google.doubleclick.BidRequestExt.BidFeedback
+	34, // 15: com.google.doubleclick.UserExt.consented_providers_settings:type_name -> com.google.doubleclick.UserExt.ConsentedProvidersSettings
+	6,  // 16: com.google.doubleclick.DealExt.deal_type:type_name -> com.google.doubleclick.DealExt.DealType
+	7,  // 17: com.google.doubleclick.DealExt.creative_source:type_name -> com.google.doubleclick.DealExt.CreativeSourceType
+	26, // 18: com.google.doubleclick.ImpExt.BuyerGeneratedRequestData.source_app:type_name -> com.google.doubleclick.ImpExt.BuyerGeneratedRequestData.SourceApp
+	28, // 19: com.google.doubleclick.AppExt.InstalledSdk.sdk_version:type_name -> com.google.doubleclick.AppExt.InstalledSdk.Version
+	28, // 20: com.google.doubleclick.AppExt.InstalledSdk.adapter_version:type_name -> com.google.doubleclick.AppExt.InstalledSdk.Version
+	33, // 21: com.google.doubleclick.BidRequestExt.BidFeedback.event_notification_token:type_name -> com.google.doubleclick.BidRequestExt.BidFeedback.EventNotificationToken
+	35, // 22: com.google.doubleclick.imp:extendee -> com.google.openrtb.BidRequest.Imp
+	36, // 23: com.google.doubleclick.app:extendee -> com.google.openrtb.BidRequest.App
+	37, // 24: com.google.doubleclick.bid_response:extendee -> com.google.openrtb.BidResponse
+	38, // 25: com.google.doubleclick.bid:extendee -> com.google.openrtb.BidResponse.SeatBid.Bid
+	39, // 26: com.google.doubleclick.native_ext:extendee -> com.google.openrtb.NativeRequest
+	40, // 27: com.google.doubleclick.eventtrackers:extendee -> com.google.openrtb.NativeResponse.EventTracker
+	41, // 28: com.google.doubleclick.publisher:extendee -> com.google.openrtb.BidRequest.Publisher
+	42, // 29: com.google.doubleclick.site:extendee -> com.google.openrtb.BidRequest.Site
+	43, // 30: com.google.doubleclick.bid_request:extendee -> com.google.openrtb.BidRequest
+	44, // 31: com.google.doubleclick.user:extendee -> com.google.openrtb.BidRequest.User
+	45, // 32: com.google.doubleclick.device:extendee -> com.google.openrtb.BidRequest.Device
+	46, // 33: com.google.doubleclick.regs:extendee -> com.google.openrtb.BidRequest.Regs
+	47, // 34: com.google.doubleclick.deal:extendee -> com.google.openrtb.BidRequest.Imp.Pmp.Deal
+	48, // 35: com.google.doubleclick.source:extendee -> com.google.openrtb.BidRequest.Source
+	8,  // 36: com.google.doubleclick.imp:type_name -> com.google.doubleclick.ImpExt
+	9,  // 37: com.google.doubleclick.app:type_name -> com.google.doubleclick.AppExt
+	10, // 38: com.google.doubleclick.bid_response:type_name -> com.google.doubleclick.BidResponseExt
+	11, // 39: com.google.doubleclick.bid:type_name -> com.google.doubleclick.BidExt
+	12, // 40: com.google.doubleclick.native_ext:type_name -> com.google.doubleclick.NativeRequestExt
+	13, // 41: com.google.doubleclick.eventtrackers:type_name -> com.google.doubleclick.EventTrackerExt
+	14, // 42: com.google.doubleclick.publisher:type_name -> com.google.doubleclick.PublisherExt
+	15, // 43: com.google.doubleclick.site:type_name -> com.google.doubleclick.SiteExt
+	16, // 44: com.google.doubleclick.bid_request:type_name -> com.google.doubleclick.BidRequestExt
+	17, // 45: com.google.doubleclick.user:type_name -> com.google.doubleclick.UserExt
+	18, // 46: com.google.doubleclick.device:type_name -> com.google.doubleclick.DeviceExt
+	19, // 47: com.google.doubleclick.regs:type_name -> com.google.doubleclick.RegsExt
+	20, // 48: com.google.doubleclick.deal:type_name -> com.google.doubleclick.DealExt
+	21, // 49: com.google.doubleclick.source:type_name -> com.google.doubleclick.SourceExt
+	50, // [50:50] is the sub-list for method output_type
+	50, // [50:50] is the sub-list for method input_type
+	36, // [36:50] is the sub-list for extension type_name
+	22, // [22:36] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_openrtb_adx_proto_init() }
@@ -3639,7 +3734,7 @@ func file_openrtb_adx_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_openrtb_adx_proto_rawDesc,
-			NumEnums:      7,
+			NumEnums:      8,
 			NumMessages:   27,
 			NumExtensions: 14,
 			NumServices:   0,
