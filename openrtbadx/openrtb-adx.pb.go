@@ -342,8 +342,8 @@ const (
 	// The page is at least partially visible. For example, in the foreground
 	// tab of a non-minimized window.
 	SiteExt_VISIBILITY_STATE_VISIBLE SiteExt_VisibilityState = 1
-	// The page is not visible at all to users. For example, when the page is
-	// on a background browser tab, or in a minimized window.
+	// The page is not visible to users. For example, when the page is in a
+	// background browser tab, or in a minimized window.
 	SiteExt_VISIBILITY_STATE_HIDDEN SiteExt_VisibilityState = 2
 )
 

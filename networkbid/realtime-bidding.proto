@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = ".;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.188
+// Protocol version: v.189
 // Copyright 2020 Google Inc. All Rights Reserved.
 
 // This is the message that Google uses to request bids. A BidRequest
@@ -72,6 +72,7 @@ message BidRequest {
   // request. Certain data may be redacted or replaced.
   optional string user_agent = 6;
 
+
   // The billing address country of the publisher. This may be different from
   // the detected country of the user in geo_criteria_id or the hosting country
   // of the website. For a complete list of country codes, please refer to
@@ -84,6 +85,41 @@ message BidRequest {
   // region, city, and metro fields.
   optional int32 geo_criteria_id = 39;
 
+  // The user's approximate geographic location. All location information is
+  // IP geolocation-derived.  The lat/lon fields may be a reference position
+  // (e.g. centroid) for the IP geolocation-derived location that's also carried
+  // by the other fields (e.g. a city), and accuracy will be the radius of a
+  // circle with the approximate area of that location. Location and its
+  // accuracy will be fuzzified as necessary to protect user privacy.
+  message Geo {
+    optional double lat = 1;
+
+    // Longitude from -180.0 to +180.0, where negative is west.
+    optional double lon = 2;
+
+    // Country using ISO-3166-1 Alpha-3.
+    optional string country = 3;
+
+    // Region code using ISO-3166-2; 2-letter state code if USA.
+    optional string region = 4;
+
+    // Google metro code; similar to but not exactly Nielsen DMAs.
+    optional string metro = 6;
+
+    // City using United Nations Code for Trade & Transport Locations.
+    // (https://www.unece.org/cefact/locode/service/location.htm).
+    optional string city = 7;
+
+    // Zip/postal code.
+    optional string zip = 8;
+
+    // Estimated location accuracy in meters.
+    optional int32 accuracy = 11;
+
+    // Local time as the number +/- of minutes from UTC.
+    optional int32 utcoffset = 10;
+  }
+  optional Geo geo = 62;
 
   // Detected postal code of the appropriate type for the country of the end
   // user (e.g., zip code if the country is "US"). The postal_code_prefix field
@@ -299,6 +335,7 @@ message BidRequest {
 
     // Apple iOS device model, e.g., "iphone 5s", "iphone 6+", "ipad 4".
     optional string hardware_version = 11;
+
   }
   optional Device device = 54;
 
@@ -694,8 +731,8 @@ message BidRequest {
     // The page is at least partially visible. For example, in the foreground
     // tab of a non-minimized window.
     VISIBILITY_STATE_VISIBLE = 1;
-    // The page is not visible at all to users. For example, when the page is
-    // on a background browser tab, or in a minimized window.
+    // The page is not visible to users. For example, when the page is in a
+    // background browser tab, or in a minimized window.
     VISIBILITY_STATE_HIDDEN = 2;
   }
   // The visibility state of the web page containing the ad slots.
@@ -1023,6 +1060,7 @@ message BidRequest {
       optional bool is_open_bidding = 2;
     }
     optional OpenBidding open_bidding = 53;
+
 
     // The ad unit code (https://support.google.com/admanager/topic/4426071)
     // This is currently only set for exchange bidding requests.
@@ -1449,6 +1487,7 @@ message BidRequest {
   // can automatically update the model when bidding patterns change.
   optional bool is_predicted_to_be_ignored = 45 [default = false];
 
+
 }
 
 // This is the message that you return in response to a BidRequest. You may
@@ -1647,7 +1686,7 @@ message BidResponse {
       required int32 id = 1;
 
       // The maximum CPM you want to be charged if you win the auction for this
-      // ad slot, expressed in micros of the bidding currecy. For example, to
+      // ad slot, expressed in micros of the bidding currency. For example, to
       // bid a CPM of 1.29 USD, set max_cpm_micros = 1290000. Winning bids are
       // rounded up to billable units. For example, in USD, bids are rounded up
       // to the next multiple of 10,000 micros (one cent).
@@ -1660,14 +1699,14 @@ message BidResponse {
       required int64 max_cpm_micros = 2;
 
       // The minimum CPM you want to be charged if you win the auction for this
-      // ad slot, expressed in micros of the bidding currecy. This may represent
-      // a second price if you choose max_cpm as the highest of several bids, or
-      // some form of reserve price if you wish to override the reserve price
-      // set by the publisher. The bid must be less than or equal to
-      // max_cpm_micros or it will be ignored. This field is optional and does
-      // not need to be set. This field is not applicable when responding to bid
-      // requests with auction_type set to FIRST_PRICE.
-      // The bidding currency is determined by:
+      // ad slot, expressed in micros of the bidding currency. This may
+      // represent a second price if you choose max_cpm as the highest of
+      // several bids, or some form of reserve price if you wish to override the
+      // reserve price set by the publisher. The bid must be less than or equal
+      // to max_cpm_micros or it will be ignored. This field is optional and
+      // does not need to be set. This field is not applicable when responding
+      // to bid requests with auction_type set to FIRST_PRICE. The bidding
+      // currency is determined by:
       // 1. The bidder-level currency, if configured.
       // 2. Otherwise, the currency of the buyer account indicated by the
       // billing ID in the billing_id field.
