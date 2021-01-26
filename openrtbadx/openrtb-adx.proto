@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = ".;openrtbadx";
-// Protocol version: v.58
+// Protocol version: v.59
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -126,6 +126,7 @@ message ImpExt {
 
   // [AdX: BidRequest.Mobile.skadn]
   optional SKAdNetworkRequest skadn = 14;
+
 }
 
 extend com.google.openrtb.BidRequest.Imp {
@@ -378,8 +379,8 @@ message SiteExt {
     // The page is at least partially visible. For example, in the foreground
     // tab of a non-minimized window.
     VISIBILITY_STATE_VISIBLE = 1;
-    // The page is not visible at all to users. For example, when the page is
-    // on a background browser tab, or in a minimized window.
+    // The page is not visible to users. For example, when the page is in a
+    // background browser tab, or in a minimized window.
     VISIBILITY_STATE_HIDDEN = 2;
   }
   // The visibility state of the web page containing the ad slot.
@@ -411,7 +412,6 @@ message BidRequestExt {
     // The status code for the ad. See creative-status-codes.txt in the
     // technical documentation for a list of ids.
     optional int32 creative_status_code = 2;
-
     // If the bid won the auction, this is the price paid in your account
     // currency.  If the bid participated in the auction but was out-bid, this
     // is the CPM that should have been exceeded in order to win.  This is not
@@ -503,6 +503,7 @@ message UserExt {
   // https://vendorlist.consensu.org/v2/vendor-list.json for details about the
   // vendors listed in the consent string.
   optional string consent = 2;
+
 }
 
 extend com.google.openrtb.BidRequest.User {
