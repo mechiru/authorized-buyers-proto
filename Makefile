@@ -12,9 +12,10 @@ OPENRTB_ADX_FILES := "openrtb.proto" "openrtb-adx.proto"
 # https://github.com/google/openrtb-doubleclick/blob/master/doubleclick-core/src/main/protobuf/network-bid.proto
 NETWORK_BID_FILES := "realtime-bidding.proto"
 
-PROTOC_VERSION := 3.13.0
+PROTOC_VERSION := 3.15.8
 
-GO_PACKAGES := google.golang.org/protobuf/cmd/protoc-gen-go \
+GO_PACKAGES := \
+	google.golang.org/protobuf/cmd/protoc-gen-go \
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 export PATH := $(shell go env GOPATH)/bin:$(PATH)
