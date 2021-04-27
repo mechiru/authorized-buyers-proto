@@ -12,8 +12,6 @@ OPENRTB_ADX_FILES := "openrtb.proto" "openrtb-adx.proto"
 # https://github.com/google/openrtb-doubleclick/blob/master/doubleclick-core/src/main/protobuf/network-bid.proto
 NETWORK_BID_FILES := "realtime-bidding.proto"
 
-PROTOC_VERSION := 3.15.8
-
 GO_PACKAGES := \
 	google.golang.org/protobuf/cmd/protoc-gen-go \
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc
@@ -39,15 +37,9 @@ fetch:
 	done
 
 install-gentool:
-	protoc_zip=protoc-$(PROTOC_VERSION)-linux-x86_64.zip; \
-	curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOC_VERSION)/$$protoc_zip; \
-	sudo unzip -o $$protoc_zip -d /usr/local bin/protoc; \
-	sudo unzip -o $$protoc_zip -d /usr/local 'include/*'; \
-	rm -f $$protoc_zip
 	for pkg in $(GO_PACKAGES); do \
 		cd /tmp && GO111MODULE=on go get -v $$pkg; \
 	done
-	sudo chmod +x /usr/local/bin/protoc
 
 gencode:
 	cd ./openrtbadx && sed -i "1s!^!syntax = \"proto2\";\noption go_package = \"./;openrtbadx\";\n!" $(OPENRTB_ADX_FILES)
