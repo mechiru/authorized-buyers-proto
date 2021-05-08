@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = "./;openrtbadx";
-// Protocol version: v.74
+// Protocol version: v.76
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -138,6 +138,66 @@ message ImpExt {
   // [AdX: BidRequest.Mobile.skadn]
   optional SKAdNetworkRequest skadn = 14;
 
+  // Indicates the creative policy and publisher blocks that applies to this
+  // request.
+  message CreativeEnforcementSettings {
+    // Creative policy enforcement level that applies to this request.
+    // Creatives that don't adhere to the specified policy will be filtered
+    // before the auction. The status of the creatives with their respected
+    // policies can be retrieved via Creative API.
+    // https://developers.google.com/authorized-buyers/apis/guides/rtb-api/creatives
+    // Bids on deals may override the policy enforcement applicable to the
+    // request.
+    enum PolicyEnforcement {
+      POLICY_ENFORCEMENT_UNKNOWN = 0;
+
+      // Baseline policy for all ads serving through any of Google’s ads
+      // platform products. Learn more at:
+      // https://support.google.com/platformspolicy/answer/3013851.
+      POLICY_ENFORCEMENT_PLATFORM_POLICY = 1;
+
+      // Policy for ads serving through Google’s ad network. This includes the
+      // baseline policy for all ads serving through any of Google’s ads
+      // platform products. Learn more at:
+      // https://support.google.com/authorizedbuyers/answer/1325008.
+      POLICY_ENFORCEMENT_NETWORK_AND_PLATFORM_POLICY = 2;
+    }
+    optional PolicyEnforcement policy_enforcement = 1;
+
+    // Creative publisher blocks enforcement level that applies to this
+    // request. Publisher blocks allow publishers to control which creatives
+    // can be shown on their properties.
+    // Deals may also override publisher blocks. Please refer to Deals.adx_ext.
+    // publisher_blocks_overridden field.
+    enum PublisherBlocksEnforcement {
+      PUBLISHER_BLOCKS_ENFORCEMENT_UNKNOWN = 0;
+
+      // The publisher's blocking controls are enforced on creatives
+      // submitted. Publisher blocks enforcement settings are provided in the
+      // following fields:
+      // - Imp.adx_ext.publisher_settings_list_id
+      // - bcat
+      // - Imp.adx_ext.allowed_restricted_category
+      // - Imp.adx_ext.allowed_vendor_type
+      // - Audio.battr
+      // - Video.battr
+      // - Banner.battr
+      // - Native.battr
+      PUBLISHER_BLOCKS_ENFORCEMENT_APPLIES = 1;
+
+      // The publisher's blocking controls are not enforced on creatives
+      // submitted.
+      PUBLISHER_BLOCKS_ENFORCEMENT_OVERRIDDEN = 2;
+    }
+    optional PublisherBlocksEnforcement publisher_blocks_enforcement = 3;
+
+    // Indicates whether the policy, scan and publisher blocks level
+    // combination is the default combination for this bidder.
+    optional bool is_default = 4;
+  }
+
+  optional CreativeEnforcementSettings creative_enforcement_settings = 15;
+
 }
 
 extend com.google.openrtb.BidRequest.Imp {
@@ -189,6 +249,72 @@ message BidResponseExt {
   // for the TURTLEDOVE simulation.
   optional .google.protobuf.Value contextual_signal = 2;
 
+  // Experimental feature; may be subject to change.
+  //
+  // Please reach out to your account manager to participate in the FLEDGE
+  // simulation.
+  //
+  // Represents a simulated FLEDGE interest group.
+  // https://github.com/WICG/turtledove/blob/main/FLEDGE.md#11-joining-interest-groups
+  message InterestGroup {
+    // References a bidding function that is provided ahead of time via
+    // Bidding functions API resource. See
+    // https://developers.google.com/authorized-buyers/apis/realtimebidding/reference/rest/v1alpha/bidders.biddingFunctions
+    optional string bidding_function_name = 1;
+
+    // Contains the interest group-related data that will be passed
+    // to the bidding function in FLEDGE simulation.
+    // Can be an arbitrary, structured JSON object.
+    optional .google.protobuf.Struct user_bidding_signals = 2;
+
+    // Contains the trusted bidding signals that will be passed to
+    // the bidding function. This field is intended to simulate the
+    // results from fetching real-time data from a trusted server in FLEDGE
+    // (https://github.com/WICG/turtledove/blob/main/FLEDGE.md#31-fetching-real-time-data-from-a-trusted-server).
+    // Can be an arbitrary, structured JSON object.
+    optional .google.protobuf.Struct trusted_bidding_signals = 3;
+
+    // Interest group owner's domain name used to associate the contextual
+    // per_buyer_signals from the bid response to their corresponding interest
+    // groups and invocations of the bidding functions. This value must match
+    // the buyer domain name configured for the interest group owner account.
+    // https://github.com/WICG/turtledove/blob/main/FLEDGE.md#11-joining-interest-groups
+    optional string buyer_domain_name = 4;
+  }
+
+  // Experimental feature; may be subject to change.
+  //
+  // A map from interest_group_name (string) to InterestGroup.
+  // Conceptually, this simulates a set of interest groups that are stored
+  // in the browser. During the simulation, bidders are responsible for
+  // storing the interest groups on their server.
+  map<string, InterestGroup> interest_group_map = 3;
+
+  // Experimental feature; may be subject to change.
+  //
+  // Contextual information required for running interest group auctions in a
+  // separate execution environment, such as the TURTLEDOVE in-browser or
+  // simulated server-side flow. In the TURTLEDOVE simulation, this should be
+  // populated in the contextual bid response.
+  message InterestGroupBidding {
+    // Information regarding an interest group buyer for the in-browser auction.
+    message InterestGroupBuyer {
+      // Optional buyer-specific signals to pass into the buyer's interest group
+      // bidding functions that will be transformed into a JSON object following
+      // Proto3 JSON representation
+      // (https://developers.google.com/protocol-buffers/docs/proto3#json).
+      // Can be left empty if no additional signals are
+      // required by the bidding function.
+      optional .google.protobuf.Value per_buyer_signals = 1;
+    }
+
+    // Map of one or more interest group owners that the bidder would enter
+    // into the interest group auction, keyed by the buyer's domain name.
+    // Interest groups that are owned by a buyer without a corresponding entry
+    // here will not participate in the auction.
+    map<string, InterestGroupBuyer> interest_group_buyers = 1;
+  }
+  optional InterestGroupBidding interest_group_bidding = 4;
 }
 
 extend com.google.openrtb.BidResponse {
@@ -388,6 +514,13 @@ message BidExt {
   // that is provided ahead of time via Bidding functions API resource.
   // Bid value will be computed by the bidding function; value provided via
   // max_cpm_micros will be ignored.
+  //
+  // This field was used in the original TURTLEDOVE simulation phase.
+  // Consider switching to FLEDGE simulation and
+  // using BidResponse.interest_group_map.bidding_function_name. The latter
+  // field associates bidding function with an interest group rather than
+  // with an ad. The current field is still supported for backward
+  // compatibility.
   optional string bidding_function_name = 20;
 
   // Experimental feature; may be subject to change. See
@@ -396,9 +529,31 @@ message BidExt {
   // for more information about the TURTLEDOVE simulation for RTB.
   //
   // Contains TURTLEDOVE interest group-related data that will be passed
-  // to the bidding function.
+  // to the bidding function
+  //
+  // This field was used in the original TURTLEDOVE simulation phase.
+  // Consider switching to FLEDGE simulation and
+  // using BidResponse.interest_group_map.user_bidding_signals.
+  // user_bidding_signals associates bidding function with an interest group
+  // rather than with an ad. interest_group_data is still supported for
+  // backward compatibility.
   optional .google.protobuf.Value interest_group_data = 21;
 
+  // Experimental feature; may be subject to change.
+  //
+  // Indicates the name of the interest group that this Ad belongs to.
+  // The name should be one of the map keys in
+  // BidResponse.interest_group_map.
+  optional string interest_group_name = 23;
+
+  // Experimental feature; may be subject to change.
+  //
+  // Contains bidder provided per-Ad data. This will be passed to
+  // the bidding function.
+  // Can be an arbitrary, structured JSON object.
+  // This field simulates 'ads' data in FLEDGE.
+  // https://github.com/WICG/turtledove/blob/main/FLEDGE.md#11-joining-interest-groups
+  optional .google.protobuf.Value ad_data = 24;
 }
 
 extend com.google.openrtb.BidResponse.SeatBid.Bid {
@@ -656,6 +811,7 @@ message UserExt {
     //
     // A mapping of ATP ID to ATP name is posted at providers.csv.
     repeated int64 consented_providers = 2 [packed = true];
+
   }
   // Information about the ad tech providers for whom the publisher has
   // specified to Google that its EEA user has consented to the use of their
