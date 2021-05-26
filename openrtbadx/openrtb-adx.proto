@@ -1,12 +1,13 @@
 syntax = "proto2";
 option go_package = "./;openrtbadx";
-// Protocol version: v.76
+// Protocol version: v.77
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
 
 // Copyright 2021 Google Inc. All Rights Reserved.
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 
 // Protocol buffer for Ad Exchange OpenRTB specification.
@@ -689,6 +690,7 @@ message BidRequestExt {
   // Feedback on bids submitted in previous responses. This is only set if
   // real-time feedback is enabled for your bidder. Please contact your
   // account manager if you wish to enable real-time feedback.
+  //
   message BidFeedback {
     // The unique id from BidRequest.id.
     optional string request_id = 1;
@@ -713,6 +715,15 @@ message BidRequestExt {
     // 3. If billing_id is empty, the currency of the buyer account indicated
     // by the sole billing ID in the bid request.
     optional double bid_price = 9;
+
+    // Experimental feature; may be subject to change. For more information
+    // about the TURTLEDOVE and FLEDGE simulations respectively, see:
+    // https://developers.google.com/authorized-buyers/rtb/turtledove,
+    // https://developers.google.com/authorized-buyers/rtb/fledge
+    //
+    // The estimated time it took for the bidding function specified by the
+    // bidder to run for on-device auctions simulated server-side.
+    optional .google.protobuf.Duration bidding_function_runtime = 11;
 
     // If the bid won the auction, this is the price paid in your account
     // currency.  If the bid participated in the auction but was out-bid, this
