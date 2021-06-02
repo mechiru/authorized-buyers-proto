@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = "./;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.206
+// Protocol version: v.208
 // Copyright 2021 Google Inc. All Rights Reserved.
 
 import "google/protobuf/duration.proto";
@@ -1569,6 +1569,7 @@ message BidRequest {
     // Advisory for Open Measurement SDK:
     // https://github.com/InteractiveAdvertisingBureau/AdCOM/blob/master/OpenRTB%20support%20for%20OMSDK.md#openrtb-and-adcom.
     optional string omidpv = 57;
+
   }
   repeated AdSlot adslot = 14;
 
@@ -1841,10 +1842,17 @@ message BidResponse {
       // The app icon, for app download ads.
       optional Image app_icon = 7;
 
-      // The URL to fetch a video ad. The URL should return an XML response that
-      // conforms to VAST standards. Only set this field if the video field is
-      // requested.
-      optional string video_url = 13;
+      // A video in the form of either a URL for a VAST tag, or an in-line VAST
+      // tag. Only set this field if VIDEO is required or recommended in the
+      // BidRequest's NativeAdTemplate.
+      oneof video {
+        // The URL to fetch a video ad. The URL should return an XML response
+        // that conforms to VAST standards.
+        string video_url = 13;
+
+        // The VAST document to be returned. Max size is 100kB.
+        string video_vast_xml = 16;
+      }
 
       // The app rating in the app store. Must be in the range [0-5].
       optional double star_rating = 8;
