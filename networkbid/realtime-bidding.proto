@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = "./;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.210
+// Protocol version: v.211
 // Copyright 2021 Google Inc. All Rights Reserved.
 
 import "google/protobuf/duration.proto";
@@ -1524,6 +1524,26 @@ message BidRequest {
       optional string data = 2;
     }
     repeated BuyerGeneratedRequestData buyer_generated_request_data = 41;
+
+    // Possible ad rendering API frameworks that can be supported.
+    // If an API is not explicitly listed, it is assumed not to be supported.
+    enum APIFramework {
+      UNKNOWN_FRAMEWORK = 0;
+      // Mobile Rich Media Ad Interface Definitions Version 1.0. See
+      // https://www.iab.com/guidelines/mraid/.
+      MRAID_1 = 3;
+      // Mobile Rich Media Ad Interface Definitions Version 2.0. See
+      // https://www.iab.com/guidelines/mraid/.
+      MRAID_2 = 5;
+      // Mobile Rich Media Ad Interface Definitions Version 3.0. See
+      // https://www.iab.com/guidelines/mraid/.
+      MRAID_3 = 6;
+      // Open Measurement Interface Definition Version 1.0. See
+      // https://iabtechlab.com/standards/open-measurement-sdk/.
+      OMID_1 = 7;
+    }
+    // List of supported API frameworks for this impression.
+    repeated APIFramework api = 46 [packed = true];
 
     // For ads rendered using a custom SDK only: multiplier applied to bid in
     // the auction. The adjustment reflects the likelihood that your bid would
