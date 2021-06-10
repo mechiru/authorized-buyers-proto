@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = "./;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.211
+// Protocol version: v.212
 // Copyright 2021 Google Inc. All Rights Reserved.
 
 import "google/protobuf/duration.proto";
@@ -528,13 +528,21 @@ message BidRequest {
     message SKAdNetworkRequest {
       // Version of SKAdNetwork supported. Dependent on both the OS version
       // and the SDK version.
+      // Note:  This field will be replaced by the
+      // BidRequest.mobile.skadn.versions field to support a list of version
+      // numbers.
       optional string version = 1;
+
+      // List of SKAdNetwork versions supported, depending on the OS version
+      // and the SDK version.
+      repeated string versions = 4;
 
       // ID of publisher app in Apple’s App Store.
       optional string sourceapp = 2;
 
       // SKAdNetworkIdentifier entries in the publisher app's Info.plist.
       repeated string skadnetids = 3;
+
     }
 
     optional SKAdNetworkRequest skadn = 34;
