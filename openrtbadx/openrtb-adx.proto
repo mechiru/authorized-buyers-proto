@@ -1,6 +1,6 @@
 syntax = "proto2";
 option go_package = "./;openrtbadx";
-// Protocol version: v.80
+// Protocol version: v.89
 import "openrtb.proto";
 option java_outer_classname = "AdxExt";
 package com.google.doubleclick;
@@ -39,8 +39,10 @@ message ImpExt {
   // to enable this feature.
   repeated ExcludedCreative excluded_creatives = 10;
 
+  // This field is deprecated due to being unused and will be removed
+  // August 2021.
   // [AdX: BidRequest.AdSlot.ExchangeBidding.publisher_parameter]
-  repeated string publisher_parameter = 4;
+  repeated string DEPRECATED_publisher_parameter = 4 [deprecated = true];
 
   // [AdX: BidRequest.AdSlot.dfp_ad_unit_code]
   optional string dfp_ad_unit_code = 6;
@@ -152,7 +154,7 @@ message ImpExt {
   message CreativeEnforcementSettings {
     // Creative policy enforcement level that applies to this request.
     // Creatives that don't adhere to the specified policy will be filtered
-    // before the auction. The status of the creatives with their respected
+    // before the auction. The status of the creatives with their respective
     // policies can be retrieved via Creative API.
     // https://developers.google.com/authorized-buyers/apis/guides/rtb-api/creatives
     // Bids on deals may override the policy enforcement applicable to the
@@ -207,6 +209,40 @@ message ImpExt {
 
   optional CreativeEnforcementSettings creative_enforcement_settings = 15;
 
+  // Describes the environment where the ad auction is run:  either all
+  // on the server-side, server-side with sandboxed interest group bidding
+  // simulation, or with the contextual auction on the server-side and the
+  // interest group bidding and the final auction on the device.
+  enum AuctionEnvironment {
+    // The auction determining the winning ad is held server-side.
+    SERVER_SIDE_AUCTION = 0;
+
+    // This value is currently not in use and will be provided only when
+    // browsers start supporting on-device auctions.
+    // The contextual auction that determines a winning contextual bid is held
+    // server-side, and bidding functions are run on the device to determine
+    // interest group bids. Both the winning contextual bid and interest
+    // group bids are entered into a final auction held on the device to
+    // select the winning ad. For more information regarding the TURTLEDOVE
+    // on device bidding and auction, see:
+    // https://github.com/WICG/turtledove and
+    // https://github.com/WICG/turtledove/blob/main/FLEDGE.md
+    ON_DEVICE_INTEREST_GROUP_AUCTION = 1;
+
+    // An interest group auction is simulated in a sandboxed environment, and
+    // its results are entered into the conventional server-side auction to
+    // determine the winning ad. Experimental feature; may be subject to
+    // change. For more information regarding about the TURTLEDOVE simulation
+    // for RTB, see:
+    // https://github.com/google/ads-privacy/tree/master/experiments/turtledove-simulation,
+    // https://developers.google.com/authorized-buyers/rtb/turtledove,
+    // and https://developers.google.com/authorized-buyers/rtb/fledge
+    SERVER_SIDE_AUCTION_WITH_INTEREST_GROUP_SIMULATION = 2;
+  }
+
+  // Specifies where the ad auction runs.
+  optional AuctionEnvironment auction_environment = 18
+      [default = SERVER_SIDE_AUCTION];
 }
 
 extend com.google.openrtb.BidRequest.Imp {
@@ -372,6 +408,27 @@ message BidExt {
     // Data to pass to the SDK in order to render the ad. This data is opaque
     // to the publisher and to Google.
     optional string rendering_data = 2;
+    // Declared ad assets to support creative scanning, classification, and
+    // enforcement of ad policy and publisher blocks for ads rendered with a
+    // custom SDK.
+    message DeclaredAd {
+      // Ad content used by SDK to render ad.
+      oneof content {
+        // The HTML snippet representative of the SDK-rendered ad.
+        string html_snippet = 1;
+
+        // The URL to the VAST asset used in the SDK-rendered ad.
+        string video_url = 2;
+
+        // The VAST document used to render custom SDK-rendered ad. This
+        // document should conform to the VAST 2.0 or 3.0 standard.
+        string video_vast_xml = 4;
+      }
+
+      // The final landing pages of the SDK-rendered ad.
+      repeated string click_through_url = 3;
+    }
+    optional DeclaredAd declared_ad = 6;
   }
   optional SdkRenderedAd sdk_rendered_ad = 7;
 
@@ -438,7 +495,8 @@ message BidExt {
   message FrequencyCap {
     // An ID that can represent a bidder's use-case for frequency capping; for
     // example, it could represent their campaign, ad, line item, etc. It should
-    // not contain any user-specific information or identifiers.
+    // not contain any user-specific information or identifiers and should not
+    // be longer than 64 characters.
     optional string fcap_id = 1;
 
     // The time units for which frequency caps can be enforced.
@@ -495,6 +553,7 @@ message BidExt {
     // ID of advertiser's app in Apple's app store.
     optional string itunesitem = 4;
 
+
     // A unique all-lowercase UUID generated by the advertiser to use for
     // generating the signature.
     optional string nonce = 5;
@@ -508,6 +567,23 @@ message BidExt {
 
     // SKAdNetwork signature as specified by Apple.
     optional string signature = 8;
+
+    // Google Mobile Ads SDK options for SKAdNetwork handling.
+    message SKAdNetworkOptions {
+      // By default, SKAdNetwork attribution will only be initiated if the
+      // click-through URL lands on the app store, either as a direct link to
+      // the app store or as the final destination of a server-side redirect
+      // chain.  This flag enables GMA SDK to always initiate SKAdNetwork
+      // attribution on-click regardless of the detected click's final
+      // destination URL. Note that enabling this will launch the app store
+      // even for clicks that are not meant to open the app store, for example
+      // clicks on Ad Choices icon. For more info, see:
+      // https://developers.google.com/authorized-buyers/rtb/skadnetwork
+      optional bool always_open_appstore = 1 [default = false];
+    }
+
+    // [AdX: BidResponse.Ad.skadn_options]
+    optional SKAdNetworkOptions skadn_opts = 10;
   }
 
   // [AdX: BidResponse.Ad.skadn]
@@ -650,6 +726,7 @@ message PublisherExt {
   // codes, please refer to
   // https://developers.google.com/adwords/api/docs/appendix/codes-formats#country-codes
   optional string country = 1;
+
 }
 
 extend com.google.openrtb.BidRequest.Publisher {
@@ -842,6 +919,22 @@ message UserExt {
     // A mapping of ATP ID to ATP name is posted at providers.csv.
     repeated int64 consented_providers = 2 [packed = true];
 
+    // The raw Additional Consent string, which contains a list of certain
+    // Google Ad Tech Providers (ATPs). These ATPs are not registered with IAB
+    // TCF v2, but publishers or their Consent Management Providers (CMPs) have
+    // ensured that certain disclosures are given to, and consents are obtained
+    // from, end users, as required by Google’s EU User Consent Policy. This
+    // field is only populated with the use of CMPs that are integrated with IAB
+    // TCF v2. Such CMPs use the raw Additional Consent string to indicate
+    // vendors that are not registered with IAB, and communicate end users’ CMP
+    // choices to those vendors. The consented_providers field contains the set
+    // of vendors that mirrors the one represented by the additional_consent
+    // field, which is in the raw form. Vendors or any other third-party service
+    // providers must not create AC strings themselves.
+    //
+    // See https://support.google.com/admanager/answer/9681920 for more details
+    // about this field.
+    optional string additional_consent = 3;
   }
   // Information about the ad tech providers for whom the publisher has
   // specified to Google that its EEA user has consented to the use of their
@@ -898,6 +991,23 @@ message UserExt {
   // https://github.com/WICG/floc for more background on FLoC.
   optional Floc floc = 3;
 
+  // Encrypted data to be passed to a buyer by the publisher.
+  message ExtendedId {
+    // The source (provider) of the signal.
+    optional string source = 1;
+
+    // The encrypted signal.
+    message ExtendedIdUid {
+      optional string id = 1;
+    }
+
+    repeated ExtendedIdUid uids = 2;
+  }
+
+  // Standard extension that is used for passing encrypted data chosen by the
+  // publisher.
+  // https://github.com/InteractiveAdvertisingBureau/openrtb/blob/master/extensions/2.x_official_extensions/eids.md
+  repeated ExtendedId eids = 5;
 }
 
 extend com.google.openrtb.BidRequest.User {
@@ -943,6 +1053,16 @@ message DeviceExt {
 
   // User Agent information.
   optional UserAgent user_agent_data = 2;
+
+  // (iOS Only) An integer passed to represent the app's app tracking
+  // authorization status, where 0 = not determined 1 = restricted 2 = denied
+  // 3 = authorized. This value is retrieved from ATTrackingManager and
+  // provided as is. See
+  // https://github.com/InteractiveAdvertisingBureau/openrtb/blob/master/extensions/community_extensions/skadnetwork.md#bid-request-1
+  //
+  // For more information about iOS's app tracking authorization status, see:
+  // https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/authorizationstatus
+  optional int32 atts = 3;
 
 }
 
@@ -1136,3 +1256,4 @@ extend com.google.openrtb.BidRequest.Source {
   // Extension key for Source.ext
   optional SourceExt source = 1059;
 }
+
