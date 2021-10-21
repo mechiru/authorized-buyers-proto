@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = "./;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.227
+// Protocol version: v.230
 // Copyright 2021 Google Inc. All Rights Reserved.
 
 import "google/protobuf/duration.proto";
@@ -63,21 +63,47 @@ message BidRequest {
   // Not set if there is one or more user_data_treatment value.
   optional bytes hosted_match_data = 37;
 
-  // Beta feature. Represents a short-lived user session on CTV/OTT devices,
+  // Represents a short-lived user session on CTV/OTT devices,
   // with a maximum session duration of 6 hours.
   // The use of session_id is never allowed for ads personalization.
   // session_id may only be used for frequency capping, competitive exclusions
-  // or related purposes. Please contact your account manager if you would like
-  // to enable this feature.
+  // or related purposes.
   optional string session_id = 65;
 
   // A string that identifies the browser and type of device that sent the
   // request. Certain data may be redacted or replaced.
   optional string user_agent = 6;
 
+  // Privacy treatments. Some fields in the bid request can be coarsened or
+  // redacted in order to protect user privacy. This message provides
+  // information about privacy treatments that apply to an ad opportunity
+  // offered via this request.
+  message PrivacyTreatments {
+
+    // Specifies the reasons that ads returned in response to this request
+    // should not be personalized.
+    enum NonPersonalizedAdsReason {
+      UNKNOWN = 0;
+      // The publisher has declared that this request should serve
+      // non-personalized ads independent of other signals.
+      // https://support.google.com/admanager/answer/9005435?hl=en#npa
+      PUBLISHER_DECLARED_NPA = 1;
+      // The publisher has requested restricted data processing for this
+      // request. https://support.google.com/authorizedbuyers/answer/11121285
+      RESTRICT_DATA_PROCESSING = 2;
+      // The user has opted out of ads personalization.
+      USER_OPT_OUT = 3;
+    }
+    repeated NonPersonalizedAdsReason non_personalized_ads_reason = 6
+        [packed = true];
+  }
+  optional PrivacyTreatments privacy_treatments = 71;
+
   message Floc {
     // The value of a cohort ID – a string identifier that is common to a large
     // cohort of users with similar browsing habits.
+    //
+    // Not currently populated.
     optional string id = 1;
 
     // The type of the FLoC. See
@@ -107,6 +133,8 @@ message BidRequest {
   // identifiers or device advertising identifiers would not be populated.
   // Experimental feature; may be subject to change. See
   // https://github.com/WICG/floc for more background on FLoC.
+  //
+  // FLoC cohort information is not currently populated.
   optional Floc floc = 68;
 
   // User Agent information. This will be populated with information about the
@@ -131,6 +159,8 @@ message BidRequest {
     optional bool mobile = 3;
     // Device architecture, e.g. "x86" or "arm".
     optional string architecture = 4;
+    // Device's bitness, e.g. "64" for 64-bit architecture.
+    optional string bitness = 9;
     // Device model.
     optional string model = 5;
   }
