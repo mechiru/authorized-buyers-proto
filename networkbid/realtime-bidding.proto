@@ -1,7 +1,7 @@
 syntax = "proto2";
 option go_package = "./;networkbid";
 package com.google.protos.adx;
-// Protocol version: v.230
+// Protocol version: v.235
 // Copyright 2021 Google Inc. All Rights Reserved.
 
 import "google/protobuf/duration.proto";
@@ -86,7 +86,7 @@ message BidRequest {
       UNKNOWN = 0;
       // The publisher has declared that this request should serve
       // non-personalized ads independent of other signals.
-      // https://support.google.com/admanager/answer/9005435?hl=en#npa
+      // https://support.google.com/admanager/answer/9005435#npa
       PUBLISHER_DECLARED_NPA = 1;
       // The publisher has requested restricted data processing for this
       // request. https://support.google.com/authorizedbuyers/answer/11121285
@@ -148,8 +148,10 @@ message BidRequest {
       // Version, split in components if needed, e.g., {"85", "1"} = v85.1.
       repeated string version = 2;
     }
-    // Identifies the browser.
+    // Identifies the browser. Prefer using the new field: browsers.
     optional BrandVersion browser = 1;
+    // Identifies the browser.
+    repeated BrandVersion browsers = 8;
     // Identifies the platform.
     optional BrandVersion platform = 2;
     // True if the agent prefers "mobile-optimized" content. Refer to the
@@ -323,13 +325,6 @@ message BidRequest {
   // be provided. This decision is made by the publisher, see
   // https://support.google.com/admanager/answer/4584891#urls for context.
   optional bool is_semi_transparent_request = 67;
-
-  // This field is deprecated due to being unused and will be removed in
-  // September 2021.
-  // An id for the domain of the page. This is set when the inventory is
-  // anonymous. Only one of url or anonymous_id is ever set in the same
-  // request.
-  optional string DEPRECATED_anonymous_id = 19 [deprecated = true];
 
   // Detected user languages, based on the language of the web page, the browser
   // settings, and other signals. The order is arbitrary. The codes are 2 or 5
@@ -818,16 +813,8 @@ message BidRequest {
     // video publisher and may not always be populated.
     //
     message ContentAttributes {
-      // The title of the video.
-      optional string title = 1;
-
       // The duration of the video, in seconds.
       optional int32 duration_seconds = 2;
-
-      // A list of keywords describing the video, extracted from the content
-      // management system of the video publisher. There will be no more than 10
-      // keywords in this list.
-      repeated string keywords = 3;
     }
     optional ContentAttributes content_attributes = 9;
 
@@ -1714,40 +1701,6 @@ message BidRequest {
     // technical documentation for a list of ids.
     optional int32 creative_status_code = 3;
 
-    // Experimental feature; may be subject to change. See
-    // https://github.com/google/ads-privacy/tree/master/experiments/turtledove-simulation
-    // and https://developers.google.com/authorized-buyers/rtb/turtledove
-    // for more information about the TURTLEDOVE simulation for RTB.
-    //
-    // This is the bid price CPM specified by the bidder in the bid response or
-    // computed by a bidding function in the TURTLEDOVE simulation expressed in
-    // micros of the bidding currency. The bidding currency is determined by:
-    // 1. The bidder-level currency, if configured.
-    // 2. Otherwise, the currency of the buyer account indicated by the
-    // billing ID in the billing_id field.
-    // 3. If billing_id is empty, the currency of the buyer account indicated
-    // by the sole billing ID in the bid request.
-    optional int64 bid_cpm_micros = 11;
-
-    // Experimental feature; may be subject to change. See
-    // https://github.com/google/ads-privacy/tree/master/experiments/turtledove-simulation
-    // and https://developers.google.com/authorized-buyers/rtb/turtledove
-    // for more information about the TURTLEDOVE simulation for RTB.
-    //
-    // The estimated time it took for the bidding function specified by the
-    // bidder to run for the TURTLEDOVE simulation.
-    optional .google.protobuf.Duration bidding_function_runtime = 12;
-
-    // Experimental feature; may be subject to change. See
-    // https://developers.google.com/authorized-buyers/rtb/fledge and
-    // https://developers.google.com/authorized-buyers/rtb/turtledove
-    // for more information about the FLEDGE and TURTLEDOVE simulations for RTB.
-    //
-    // An optional string for debugging a bidding function.
-    // This is the string that can be returned by the bidding function during
-    // invocation. This debug string is limited to a maximum of 200 bytes of
-    // data.
-    optional string bidding_function_debug_string = 13;
 
     // If the bid won the auction, this is the price paid in your account
     // currency. If the bid participated in the auction but was out-bid, this
@@ -1863,9 +1816,6 @@ message BidRequest {
   // https://support.google.com/authorizedbuyers/answer/10890762 for more
   // information.
   //
-  // To receive this signal, please contact your account manager to enable
-  // frequency capping for your account.
-  //
   // Describes the scope of frequency cap enforcement available for this
   // request. Frequency caps to be enforced for a bid can be specified in the
   // BidResponse.ad.adslot.frequency_cap field.
@@ -1886,6 +1836,12 @@ message BidRequest {
     // Frequency capping enforcement is available across multiple apps on the
     // device, excluding browsers.
     FREQUENCY_CAPPING_SCOPE_DEVICE = 3;
+
+    // Frequency capping enforcement is available within a single app.
+    FREQUENCY_CAPPING_SCOPE_APP = 4;
+
+    // Frequency capping enforcement is available within a single site.
+    FREQUENCY_CAPPING_SCOPE_SITE = 5;
   }
 
   optional FrequencyCappingScope frequency_capping_scope = 70;
@@ -2168,9 +2124,6 @@ message BidResponse {
       // https://support.google.com/authorizedbuyers/answer/10890762 for more
       // information.
       //
-      // To enable frequency capping for your account, please contact your
-      // account manager.
-      //
       // Specifies frequency capping to be applied to the bid. Impressions for
       // each user are capped at the level specified by frequency_cap_id. A bid
       // will not participate in the auction if an additional impression for the
@@ -2225,62 +2178,6 @@ message BidResponse {
       }
       repeated FrequencyCap frequency_cap = 16;
 
-      // Experimental feature; may be subject to change. See
-      // https://github.com/google/ads-privacy/tree/master/experiments/turtledove-simulation
-      // and https://developers.google.com/authorized-buyers/rtb/turtledove
-      // for more information about the TURTLEDOVE simulation for RTB.
-      //
-      // Bidding function name that the bidder selected for the TURTLEDOVE
-      // simulation. The name refers to the bidding function
-      // that is provided ahead of time via Bidding functions API resource.
-      // Bid value will be computed by the bidding function; value provided via
-      // max_cpm_micros will be ignored.
-      //
-      // This field was used in the original TURTLEDOVE simulation phase.
-      // Consider switching to FLEDGE simulation and
-      // using BidResponse.interest_group_map.bidding_function_name. The latter
-      // field associates bidding function with an interest group rather than
-      // with an ad. The current field is still supported for backward
-      // compatibility.
-      optional string bidding_function_name = 17;
-
-      // Experimental feature; may be subject to change. See
-      // https://github.com/google/ads-privacy/tree/master/experiments/turtledove-simulation
-      // and https://developers.google.com/authorized-buyers/rtb/turtledove
-      // for more information about the TURTLEDOVE simulation experiments.
-      //
-      // Bidder-provided inputs to the bidding function; only used to be passed
-      // to the bidding function as one of the arguments. An object in a
-      // bidder-defined format.
-      //
-      // This field was used in the earlier TURTLEDOVE server-side simulation
-      // experiment. Consider switching to the FLEDGE server-side simulation
-      // experiment.
-      optional .google.protobuf.Value interest_group_data = 18;
-
-      // Experimental feature; may be subject to change.
-      // Please reach out to your account manager to participate in the FLEDGE
-      // simulation.
-      //
-      // Reference to the simulated FLEDGE interest group for this ad; must be
-      // one of the map keys in BidResponse.interest_group_map.
-      optional string interest_group_name = 19;
-
-      // Experimental feature; may be subject to change.
-      // Please reach out to your account manager to participate in the FLEDGE
-      // simulation.
-      //
-      // Bidder-provided inputs to the bidding function (ad-level information).
-      // Only applicable to and used in the FLEDGE simulation, where it is
-      // passed to the bidding function as an argument.
-      //
-      // An object in a bidder-defined format. When passed to the bidding
-      // function, it will be converted to a JSON object using the proto3
-      // canonical JSON representation
-      // (https://developers.google.com/protocol-buffers/docs/proto3#json).
-      // This field simulates 'ads' data in FLEDGE.
-      // https://github.com/WICG/turtledove/blob/main/FLEDGE.md#11-joining-interest-groups
-      optional .google.protobuf.Value ad_data = 20;
     }
     repeated AdSlot adslot = 3;
 
@@ -2462,104 +2359,6 @@ message BidResponse {
   // for the full set of no-bid reason codes.
   optional int32 no_bid_reason = 6;
 
-  // Experimental feature; may be subject to change. See
-  // https://github.com/google/ads-privacy/tree/master/experiments/turtledove-simulation
-  // and https://developers.google.com/authorized-buyers/rtb/turtledove
-  // for more information about the TURTLEDOVE simulation for RTB.
-  //
-  // Inputs to the bidding function. Only applicable to and used in the
-  // TURTLEDOVE simulation, where it is passed to the bidding function as an
-  // argument.
-  // An object in the bidder-defined format.
-  optional .google.protobuf.Value contextual_signal = 7;
-
-  // Experimental feature; may be subject to change.
-  // Please reach out to your account manager to participate in the FLEDGE
-  // simulation experiment.
-  //
-  // A request by a bidder to execute a given bidding function in the FLEDGE
-  // simulation in order to compute a bid and choose an ad. This also includes
-  // inputs that will be provided to the bidding function.
-  // https://github.com/WICG/turtledove/blob/main/FLEDGE.md#11-joining-interest-groups
-  message InterestGroup {
-    // References a bidding function that is provided by the bidder ahead of
-    // time via Bidding functions API resource. See
-    // https://developers.google.com/authorized-buyers/apis/realtimebidding/reference/rest/v1alpha/bidders.biddingFunctions
-    optional string bidding_function_name = 1;
-
-    // Inputs to the bidding function specified by the bidder. Only applicable
-    // to and used in the FLEDGE simulation, where it is passed to the bidding
-    // function as an argument.
-    //
-    // An object in a bidder-defined format. When passed to the bidding
-    // function, it will be converted to a JSON object using the proto3
-    // canonical JSON representation
-    // (https://developers.google.com/protocol-buffers/docs/proto3#json).
-    optional .google.protobuf.Struct user_bidding_signals = 2;
-
-    // Inputs to the bidding function specified by the bidder. Only applicable
-    // to and used in the FLEDGE simulation, where it is passed to the bidding
-    // function as an argument.
-    // Can help simulate the results of fetching trusted bidding signals in
-    // FLEDGE proposal
-    // (https://github.com/WICG/turtledove/blob/main/FLEDGE.md#31-fetching-real-time-data-from-a-trusted-server).
-    //
-    // An object in a bidder-defined format. When passed to the bidding
-    // function, it will be converted to a JSON object using the proto3
-    // canonical JSON representation
-    // (https://developers.google.com/protocol-buffers/docs/proto3#json).
-    optional .google.protobuf.Struct trusted_bidding_signals = 3;
-
-    // Interest group owner's domain name to associate the contextual
-    // per_buyer_signals from the bid response to their corresponding
-    // invocations of the bidding functions in the FLEDGE simulation. This value
-    // must match the interest group buyer domain name configured for the
-    // bidder's account.
-    optional string buyer_domain_name = 4;
-  }
-
-  // Experimental feature; may be subject to change.
-  //
-  // Please reach out to your account manager to participate in the FLEDGE
-  // simulation.
-  //
-  // Bidder-provided inputs that a bidder requests to execute their bidding
-  // functions for in order to compute bids and choose ads in the FLEDGE
-  // simulation.
-  map<string, InterestGroup> interest_group_map = 9;
-
-  // Experimental feature; may be subject to change.
-  //
-  // Please reach out to your account manager to participate in the FLEDGE
-  // simulation.
-  //
-  // Information used for running interest group auctions in a separate
-  // execution environment, such as the TURTLEDOVE in-browser or simulated
-  // server-side flow. In the FLEDGE simulation, this should be populated in the
-  // contextual bid response.
-  message InterestGroupBidding {
-    // Buyer-level information to use in the separate auction environment, such
-    // as the TURTLEDOVE in-browser or server-side FLEDGE simulation experiment.
-    message InterestGroupBuyer {
-      // Optional buyer-specific inputs to the bidding function. Currently, only
-      // applicable to and used in the FLEDGE simulation, where it is passed to
-      // the bidding function as an argument.
-      //
-      // An object in a bidder-defined format that will be transformed into a
-      // JSON object following Proto3 JSON representation
-      // (https://developers.google.com/protocol-buffers/docs/proto3#json).
-      // Can be left empty if no additional signals are
-      // required by the bidding function.
-      optional .google.protobuf.Value per_buyer_signals = 1;
-    }
-
-    // Map of one or more interest group owners that the bidder would enter
-    // into the interest group auction, keyed by the buyer's domain name.
-    // Interest groups that are owned by a buyer without a corresponding entry
-    // here will not participate in the auction.
-    map<string, InterestGroupBuyer> interest_group_buyers = 1;
-  }
-  optional InterestGroupBidding interest_group_bidding = 10;
 }
 
 // SKAdNetwork API starting from version 2.2 supports multiple ad
